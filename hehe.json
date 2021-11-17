@@ -1,0 +1,262 @@
+element0 value : {
+    "function_name": "swap",
+    "from": "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "ethValue": "0.1102505",
+    "value": "110250500000000000"
+}
+element1 value : {
+    "function_name": "isETH",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element2 value : {
+    "function_name": "uniBalanceOf",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element3 value : {
+    "function_name": "isETH",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element4 value : {
+    "function_name": "balanceOf",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element5 value : {
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "ethValue": "0.1102505",
+    "value": "110250500000000000"
+}
+element6 value : {
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "ethValue": "0",
+    "value": "0"
+}
+element7 value : {
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+    "ethValue": "0.0027562625",
+    "value": "2756262500000000"
+}
+element8 value : {
+    "function_name": "deposit",
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "ethValue": "0.1074942375",
+    "value": "107494237500000000"
+}
+element9 value : {
+    "function_name": "transfer",
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "ethValue": "0",
+    "value": "0"
+}
+element10 value : {
+    "function_name": "transferFrom",
+    "from": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "to": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    "value": null
+}
+element11 value : {
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "ethValue": "0",
+    "value": "0"
+}
+element12 value : {
+    "function_name": "getReserves",
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}       
+element13 value : {
+    "function_name": "swap",
+    "from": "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "ethValue": "0",
+    "value": "0"
+}element14 value : {
+    "function_name": "getReserves",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}       
+element15 value : {
+    "function_name": "_safeTransfer",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}     
+element16 value : {
+    "function_name": "transfer",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "ethValue": "0",
+    "value": "0"
+}
+element17 value : {
+    "function_name": "mul",
+    "from": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element18 value : {
+    "function_name": "div",
+    "from": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element19 value : {
+    "function_name": "sub",
+    "from": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element20 value : {
+    "function_name": "sub",
+    "from": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element21 value : {
+    "function_name": "add",
+    "from": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element22 value : {
+    "function_name": "balanceOf",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element23 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element24 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element25 value : {
+    "function_name": "sub",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element26 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element27 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element28 value : {
+    "function_name": "sub",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element29 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element30 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element31 value : {
+    "function_name": "mul",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element32 value : {
+    "function_name": "_update",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element33 value : {
+    "function_name": "encode",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element34 value : {
+    "function_name": "uqdiv",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element35 value : {
+    "function_name": "encode",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element36 value : {
+    "function_name": "uqdiv",
+    "from": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "to": "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    "value": null
+}
+element37 value : {
+    "function_name": "uniBalanceOf",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}      
+element38 value : {
+    "function_name": "isETH",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element39 value : {
+    "function_name": "balanceOf",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "value": null
+}
+element40 value : {
+    "function_name": "sub",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element41 value : {
+    "function_name": "sub",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}
+element42 value : {
+    "function_name": "_emitSwapped",
+    "from": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "to": "0x111111125434b319222cdbf8c261674adb56f3ae",
+    "value": null
+}

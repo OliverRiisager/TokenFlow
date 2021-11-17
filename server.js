@@ -22,11 +22,10 @@ app.get("/transfers/:txhash", (req, res) => {
 	let txhash = req.params.txhash;
 	tools
 		.getTransfers(txhash)
-		.then((transfers) => {
+		.then(transfers => {
 			res.status(200).send(transfers);
 		})
 		.catch((err) => {
-			console.log(err);
 			let pokkers = {desc: "There was an error :(", err: err}
 			res.status(200).send(pokkers);
 		});

@@ -369,11 +369,20 @@ function combineCallsWithLogs(txs, logs){
 		}
 		if(logInfos.length > 0) {
 			for (let i = 0; i < logInfos.length; i++) {
-				findLogsWithoutMatch(logInfos[i], txs, noMatch, updatedLogs);
+				var logInfo = logInfos[i];
+				var newObj = {
+					token: logInfo.tokenAddress,
+					to: logInfo.to,
+					from: logInfo.from,
+					rawValue: logInfo.rawValue,
+					type: logInfo.type
+				};
+				updatedLogs.push(newObj);
+				// findLogsWithoutMatch(logInfos[i], txs, noMatch, updatedLogs);
 			}
 		}
 	}
-	combineTxsAndLogs(updatedLogs, txs, tempTxs);
+	return combineTxsAndLogs2(updatedLogs, txs, tempTxs);
 	console.log('sheeeesh ' + JSON.stringify(noMatch));
 	return tempTxs;
 }
@@ -419,8 +428,6 @@ function tryFindMatch(txs, logInfo){
 				result.matchFound = true;
 				tx.alreadyMatched = true;
 				break;
-			}else{
-				console.log(logInfo.rawValue + " tx val " + tx.rawValue);
 			}
 		}
 	}
@@ -458,6 +465,55 @@ function combineTxsAndLogs(logs, txs, tmpTxs){
 			logElement = undefined;
 		}
 	}
+}
+
+function combineTxsAndLogs2(logs, txs){
+	var tmpTxs = [];
+	var txsUsed = 0;
+	for (let i = 0; i < logs.length; i++) {
+		var logElement = logs[i];
+		if(txsUsed === txs.length){
+			tmpTxs.push(logElement);
+			continue;
+		}
+		var logMatchedAnyTx = false;
+		for (let i = txsUsed; i < txs.length; i++) {
+			var txElement = txs[i];
+			if(txElement.isUsed){
+				continue;
+			}
+			if(txElement.type === 'ethTransfer'){
+				txElement.isUsed = true;
+				tmpTxs.push(txElement);
+				txsUsed++;
+				continue;
+			}
+			if(doesLogEqualTx(txElement, logElement)){
+				txElement.isUsed = true;
+				tmpTxs.push(txElement);
+				txsUsed++;
+				logMatchedAnyTx = true;
+				break;
+			}
+		}
+		if(!logMatchedAnyTx){
+			tmpTxs.push(logElement);
+		}
+	}
+	return tmpTxs;
+}
+
+function doesLogEqualTx(tx, logInfo){
+	if(tx.logCompareType === logInfo.type){
+		if(logInfo.from === tx.from 
+			&& logInfo.to === tx.to 
+			&& logInfo.tokenAddress === tx.token
+			&& logInfo.rawValue === tx.rawValue) 
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 function getCorrectTxIndex(txs, matchIndex){

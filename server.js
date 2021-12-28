@@ -1,5 +1,5 @@
 const express = require("express");
-var tools = require("./tools.js");
+var traceProcessor = require("./tools/traceProcessor");
 
 const cors = require("cors");
 const app = express();
@@ -20,7 +20,8 @@ app.get("/tx/:txhash", (req, res) => {
 
 app.get("/transfers/:txhash", (req, res) => {
 	let txhash = req.params.txhash;
-	tools
+	var traceProcessorInstance = new traceProcessor();
+	traceProcessorInstance
 		.getTransfers(txhash)
 		.then(transfers => {
 			res.status(200).send(transfers);

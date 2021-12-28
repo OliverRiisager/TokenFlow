@@ -12,6 +12,8 @@ function getValue(value, coin, tokens) {
 	let decimals = getDecimals(coin, tokens);
 	let x = BigNumber(value);
 	let temp = x.div(decimals);
+	let lmao = BigNumber(temp);
+	console.log('temp big ' + lmao);
 	temp = BigNumber(temp.toFixed(3));
 	return temp.toNumber();
 }
@@ -278,7 +280,7 @@ function drawFigure(data, _valueOnLabels, _approvals) {
     var zoomScale = Math.min(width / graphWidth, height / graphHeight);
     var translateX = (width / 2) - ((graphWidth * zoomScale) / 2)
     var translateY = (height / 2) - ((graphHeight * zoomScale) / 2);
-	console.log(translateX, translateY);
+	// console.log(translateX, translateY);
 	var svgZoom = svg.transition().duration(500);
 	svgZoom.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(zoomScale));	
 //	svgZoom.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1));
@@ -305,7 +307,7 @@ getTransfers().then((tx) => {
 	console.log(tx);
 
 	getLinks(tx).then((data) => {
-		console.log(data);
+		// console.log(data);
 		lastData = data;
 		pleaseDraw();
 		//drawFigure(data, true, false);

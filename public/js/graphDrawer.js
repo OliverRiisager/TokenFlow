@@ -72,7 +72,7 @@ function drawGraph(data) {
 	svgZoom.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(zoomScale));	
 }
 
-async function getTransfersEpic() {
+async function getTransfers() {
 	let hostname = window.location.hostname;
 	let pathname = window.location.pathname;
 	let _txhash = pathname.substring(4);
@@ -97,7 +97,6 @@ async function getTransfersEpic() {
 	return data;
 }
 
-getTransfersEpic().then(txObj => {{
-    console.log(JSON.stringify(txObj));
+getTransfers().then(txObj => {{
     drawGraph(txObj);
   }});

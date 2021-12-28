@@ -1,5 +1,16 @@
 http://tokenflow.xyz
 
+# Example Config setup:
+
+---config.js---
+var config = {};
+
+config.httpGethProvider = "(YOUR GETH PROVIDER)";
+
+module.exports = config;
+---config.js END---
+
+
 # Test transactions:
 
 *Swap Eth to ERC20 (WBTC).*

@@ -53,7 +53,7 @@ class traceProcessor {
 
         var combinedTxsAndLogs = combineTxsAndLogs(processedLogs, processedCalls);
 
-        var nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, senderAddress, erc20abi);
+        var nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
         return nodesAndTxs;
     }
 }

@@ -1,5 +1,6 @@
 
 const ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
 function processLogs(logs){
 	let processedLogs = [];
@@ -20,18 +21,9 @@ function processLogs(logs){
 		}
 		if(type === 'deposit'){
 			var depositEvent = log.events;
-
             addLog(
                 processedLogs,
-				ethAddress,
-				log.address.toLowerCase(),
-				depositEvent[0].value.toLowerCase(),
-				depositEvent[1].value,
-				type);
-
-            addLog(
-                processedLogs,
-				log.address.toLowerCase(),
+				wethAddress,
 				depositEvent[0].value.toLowerCase(),
 				log.address.toLowerCase(),
 				depositEvent[1].value,
@@ -44,7 +36,7 @@ function processLogs(logs){
 			var withdrawEvent = log.events;
             addLog(
                 processedLogs,
-				log.address.toLowerCase(),
+				wethAddress,
 				log.address.toLowerCase(),
 				withdrawEvent[0].value.toLowerCase(),
 				withdrawEvent[1].value,
@@ -62,7 +54,8 @@ function addLog(processedLogs, token, to, from, rawValue, type){
         to: to,
         from: from,
         rawValue: rawValue,
-        type: type
+        type: type,
+		isLog: true
     });
 }
 

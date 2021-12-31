@@ -16,26 +16,20 @@ const validFunctionNames = [
 	withdraw
 ];
 
-var senderAddress = undefined;
-
 function processCalls(callObject, abiDecoder) {
    var processedCallsArray = [];
-   doProcessCall(processedCallsArray, callObject, abiDecoder, true);
+   doProcessCall(processedCallsArray, callObject, abiDecoder);
    return {
-       processedCalls: processedCallsArray,
-       senderAddress
+       processedCalls: processedCallsArray
    }
 }
 
-function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCallType = undefined, firstCall = false){
+function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCallType = undefined){
     let transactionValue = new BigNumber(callObject.value);
     let hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
     let decodedInput = callObject.input ? abiDecoder.decodeMethod(callObject.input) : undefined;
     let interestingInput = decodedInput && validFunctionNames.indexOf(decodedInput['name']) != -1;
 
-    if(firstCall){
-        senderAddress = callObject.from;
-    }
     if(callObject.type === 'DELEGATECALL'){
         interestingInput = false;
         hasValue = false;
@@ -75,19 +69,11 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCall
                         callObject.from, 
                         utility.getValue(callObject.value), 
                         decodedInput['name'], 
-                        decodedInput['name']);
-                    addCall(
-                        processedCallsArray,
-                        wethAddress, 
-                        callObject.from, 
-                        callObject.to, 
-                        utility.getValue(callObject.value), 
-                        decodedInput['name'], 
-                        decodedInput['name']);
+                        deposit);
                 }
                 break;
         
-            case withdraw:
+            case withdraw:                
                 if(callObject.to.toLowerCase() === wethAddress){
                     addCall(
                         processedCallsArray,
@@ -96,22 +82,12 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCall
                         callObject.from, 
                         decodedInput.params[0].value, 
                         decodedInput['name'], 
-                        decodedInput['name']);
-
-                        
-                    addCall(
-                        processedCallsArray,
-                        ethAddress, 
-                        callObject.from, 
-                        callObject.to, 
-                        decodedInput.params[0].value, 
-                        decodedInput['name'], 
-                        decodedInput['name']);
+                        withdraw);
                 }
                 break;
         }
     }
-    if(hasValue && !interestingInput && previousCallType != withdraw){
+    if(hasValue && !interestingInput){
         addCall(
             processedCallsArray,
             ethAddress,

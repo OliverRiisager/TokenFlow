@@ -4,36 +4,42 @@ function drawGraph(data) {
 		rankdir: "LR"
 	});
 
-    data.nodes.forEach(node => {
+    data.nodes.forEach((node, index) => {
         let link = "https://etherscan.io/address/" + node.address;
         let name = node.name;
-        g.setNode(node.address, {
+        let nodeObj = {
             labelType: "html",
-            label: "<a href=" + link + ">" + name + "</a>"
-        });
+            label: "<a href=" + link + ">" + name + "</a>",
+            id: node.address
+        };
+        g.setNode(node.address, nodeObj);
     });
 
     data.transfers.forEach((element, index) => {
 
         let edgeLink = "https://etherscan.io/address/" + element.token;
         let edgeName = element.tokenName;
+        let edgeObj = 
+        {
+            labelType: "html",
+            label:
+                " " +
+                index +
+                ") " +
+                element.value +
+                " <a href=" +
+                edgeLink +
+                ">" +
+                edgeName +
+                "</a>",
+            transactionInfo: element
+                // + "\n " + element.type + " \n islog " + element.isLog ,
+            // curve: d3.curveBasis
+        }
         g.setEdge(
             element.from,
             element.to,
-            {
-                labelType: "html",
-                label:
-                    " " +
-                    index +
-                    ") " +
-                    element.value +
-                    " <a href=" +
-                    edgeLink +
-                    ">" +
-                    edgeName +
-                    "</a>",
-                // curve: d3.curveBasis
-            },
+            edgeObj,
             index
         );
     });
@@ -43,26 +49,65 @@ function drawGraph(data) {
 		node.rx = node.ry = 10;
 	});
 
-	var svg = d3.select("svg");
-	svg.selectAll("*").remove();
-	svg.append("g");
-	var inner = svg.select("g");
-	
-
 	// Create the renderer
 	var render = new dagreD3.render();
 
+	var svg = d3.select("svg");
+	var inner = svg.append("g");
+
+	var zoom = d3.zoom()
+        .on("zoom", function () {
+            inner.attr("transform", d3.event.transform);
+        });
+	svg.call(zoom);
+
+    // Simple function to style the tooltip for the given node.
+    var styleTooltip = function(info, description) {
+        return "<p class='info'>" + info + "</p><p class='description'>" + description + "</p>";
+    };
+
+    // Simple function to style the tooltip for the given node.
+    var errorStyleTooltip = function(error) {
+        return "<p class='error'>" + error + "</p>";
+    };
+    
 	// Run the renderer. This is what draws the final graph.
 	render(inner, g);
 
-    
-	var zoom = d3.zoom().on("zoom", function () {
-		inner.attr("transform", d3.event.transform);
-	});
-	svg.call(zoom);
+    inner.selectAll("g.edgeLabel")
+        .attr("title", function(v, index) 
+            { 
+                let foundEdge = g.edge(v);
+                let transactionInfo = foundEdge.transactionInfo;
+                if(transactionInfo.error != undefined){
 
-	var graphWidth = g.graph().width + 80;
-    var graphHeight = g.graph().height + 40;
+                    let something = $("#"+transactionInfo.to).select("rect");
+                    something.attr("class", "node error");
+                    if(index === 0){
+                        let something = $("#"+transactionInfo.from).select("rect");
+                        something.attr("class", "node error");
+                    }
+                    return errorStyleTooltip("Error: " + transactionInfo.error);
+                }else{
+                    return styleTooltip("Useful header", "Useful description");
+                }
+            }
+        ).each(
+            function(v) 
+            { 
+                let foundEdge = g.edge(v);
+                let transactionInfo = foundEdge.transactionInfo;
+                let tipsyObj = { gravity: "s", opacity: 0.9, html: true };
+                if(transactionInfo.error != undefined)
+                {
+                    tipsyObj.hoverlock = true;
+                    tipsyObj.className = "error";
+                }
+                $(this).tipsy(tipsyObj); 
+            });
+
+	var graphWidth = g.graph().width;
+    var graphHeight = g.graph().height;
     var width = parseInt(svg.style("width").replace(/px/, ""));
     var height = parseInt(svg.style("height").replace(/px/, ""));
     var zoomScale = Math.min(width / graphWidth, height / graphHeight);

@@ -17,22 +17,26 @@ const validFunctionNames = [
 ];
 
 function processCalls(callObject, abiDecoder) {
-   var processedCallsArray = [];
+   let processedCallsArray = [];
    doProcessCall(processedCallsArray, callObject, abiDecoder);
-   return {
-       processedCalls: processedCallsArray
-   }
+   return processedCallsArray
 }
 
-function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCallType = undefined){
+let consumableErrorMsg = undefined;
+
+
+function doProcessCall(processedCallsArray, callObject, abiDecoder){
     let transactionValue = new BigNumber(callObject.value);
     let hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
     let decodedInput = callObject.input ? abiDecoder.decodeMethod(callObject.input) : undefined;
-    let interestingInput = decodedInput && validFunctionNames.indexOf(decodedInput['name']) != -1;
+    let interestingInput = decodedInput !== undefined && validFunctionNames.indexOf(decodedInput['name']) !== -1;
 
     if(callObject.type === 'DELEGATECALL'){
         interestingInput = false;
         hasValue = false;
+    }
+    if(callObject.error !== undefined){
+        consumableErrorMsg = callObject.error;
     }
     thisCallType = undefined;
     if(interestingInput) {
@@ -104,14 +108,19 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, previousCall
 }
 
 function addCall(txs, token, to, from, rawValue, type, logCompareType){
-    txs.push({
+    let newTxCall = {
         token: token,
         to: to,
         from: from,
         rawValue: rawValue,
         type: type,
         logCompareType: logCompareType
-    });
+    };
+    if(consumableErrorMsg != undefined){
+        newTxCall.error = consumableErrorMsg;
+        consumableErrorMsg = undefined;
+    }
+    txs.push(newTxCall);
 }
 
 module.exports = processCalls;

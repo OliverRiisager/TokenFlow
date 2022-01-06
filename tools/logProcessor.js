@@ -6,9 +6,9 @@ function processLogs(logs){
 	let processedLogs = [];
 	for (let i = 0; i < logs.length; i++) {
 		let log = logs[i];
-		var type = log.name.toLowerCase();
+		let type = log.name.toLowerCase();
 		if(type === 'transfer'){
-			var transferEvent = log.events;
+			let transferEvent = log.events;
 
             addLog(
                 processedLogs,
@@ -20,7 +20,7 @@ function processLogs(logs){
             continue;
 		}
 		if(type === 'deposit'){
-			var depositEvent = log.events;
+			let depositEvent = log.events;
             addLog(
                 processedLogs,
 				wethAddress,
@@ -33,7 +33,7 @@ function processLogs(logs){
 		}
 
 		if(type === 'withdrawal'){
-			var withdrawEvent = log.events;
+			let withdrawEvent = log.events;
             addLog(
                 processedLogs,
 				wethAddress,
@@ -47,7 +47,6 @@ function processLogs(logs){
     return processedLogs;
 }
 
-
 function addLog(processedLogs, token, to, from, rawValue, type){
     processedLogs.push({
         token: token,
@@ -55,7 +54,8 @@ function addLog(processedLogs, token, to, from, rawValue, type){
         from: from,
         rawValue: rawValue,
         type: type,
-		isLog: true
+		isLog: true,
+		logIndex: processedLogs.length
     });
 }
 

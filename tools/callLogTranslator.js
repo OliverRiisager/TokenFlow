@@ -56,7 +56,7 @@ async function translateCallsAndLogs(combinedLogsAndTxs, web3, senderAddress, er
     nodes = nodes.map((node) => {
         return {
             address: node,
-            name : node === senderAddress ? 'sender' : contractAddressToName[node]
+            name: node === senderAddress ? 'sender' : contractAddressToName[node]
         }
     });
 

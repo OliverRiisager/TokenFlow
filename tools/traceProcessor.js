@@ -16,7 +16,7 @@ class traceProcessor {
       abiDecoder.addABI(erc20abi);
       abiDecoder.addABI(wethAbi);
       
-      var web3Instance = new Web3(new Web3.providers.HttpProvider(config.httpGethProvider));
+      let web3Instance = new Web3(new Web3.providers.HttpProvider(config.httpGethProvider));
       this.web3 = this.extendWeb3(web3Instance);
       this.txs = [];
     }
@@ -39,21 +39,18 @@ class traceProcessor {
 
     async doGetTransfers(txHash){
         
-        var rawTransferData = await getTrace(txHash, this.web3);
-        var callObject = rawTransferData.callObject;
+        let rawTransferData = await getTrace(txHash, this.web3);
+        let callObject = rawTransferData.callObject;
 
-        var processCallsResult = processCalls(callObject, abiDecoder);
+        let processedCalls = processCalls(callObject, abiDecoder);
 
-        var senderAddress = processCallsResult.senderAddress;
-        var processedCalls = processCallsResult.processedCalls;
-
-        var receipt = rawTransferData.receipt;
+        let receipt = rawTransferData.receipt;
 		let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
-        var processedLogs = processLogs(decodedLogs);
+        let processedLogs = processLogs(decodedLogs);
 
-        var combinedTxsAndLogs = combineTxsAndLogs(processedLogs, processedCalls);
+        let combinedTxsAndLogs = combineTxsAndLogs(processedLogs, processedCalls);
 
-        var nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
+        let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
         return nodesAndTxs;
     }
 }

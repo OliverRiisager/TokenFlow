@@ -1,5 +1,5 @@
 async function getTrace(txhash, web3) {
-    var gethTrace = await getGethTrace(web3, txhash);
+    let gethTrace = await getGethTrace(web3, txhash);
     return gethTrace;
 }
   

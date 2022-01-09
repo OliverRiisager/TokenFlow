@@ -1,15 +1,19 @@
 const BigNumber = require('bignumber.js');
 const utility = require("./utility.js");
+const knownAddresses = require('./knownAddresses');
+const transactionAndLogTypes = require('./transactionAndLogTypes');
 
-const ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+const ethAddress = knownAddresses.ethAddress;
+const wethAddress = knownAddresses.wethAddress;
 
-const transfer = 'transfer';
-const transferFrom = 'transferFrom';
-const deposit = 'deposit';
-const withdraw = 'withdraw';
+const transfer = transactionAndLogTypes.transfer;
+const transferFrom = transactionAndLogTypes.transferFrom;
+const deposit = transactionAndLogTypes.deposit;
+const withdraw = transactionAndLogTypes.withdraw;
+const ethTransfer = transactionAndLogTypes.ethTransfer;
+const unknownTransfer = transactionAndLogTypes.unknown;
 
-const validFunctionNames = [
+let validFunctionNames = [
 	transfer,
 	transferFrom,
 	deposit,
@@ -18,14 +22,14 @@ const validFunctionNames = [
 
 function processCalls(callObject, abiDecoder) {
    let processedCallsArray = [];
-   doProcessCall(processedCallsArray, callObject, abiDecoder);
+   doProcessCall(processedCallsArray, callObject, abiDecoder, true);
    return processedCallsArray
 }
 
 let consumableErrorMsg = undefined;
 
 
-function doProcessCall(processedCallsArray, callObject, abiDecoder){
+function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = false){
     let transactionValue = new BigNumber(callObject.value);
     let hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
     let decodedInput = callObject.input ? abiDecoder.decodeMethod(callObject.input) : undefined;
@@ -37,6 +41,18 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder){
     }
     if(callObject.error !== undefined){
         consumableErrorMsg = callObject.error;
+        if(firstCall && callObject.calls === undefined){
+            if(!interestingInput && !hasValue){
+                addCall(
+                    processedCallsArray,
+                    unknownTransfer,
+                    callObject.to,
+                    callObject.from,
+                    new BigNumber(0),
+                    unknownTransfer,
+                    unknownTransfer);
+            }
+        }
     }
     thisCallType = undefined;
     if(interestingInput) {
@@ -98,7 +114,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder){
             callObject.to,
             callObject.from,
             utility.getValue(callObject.value),
-            "ethTransfer");
+            ethTransfer);
     }
     if(callObject.calls){
         for (const _callObject of callObject.calls) {

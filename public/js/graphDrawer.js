@@ -1,5 +1,4 @@
 function drawGraph(data) {
-    console.log('drawer');
 	var g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({
 		rankdir: "LR"
 	});
@@ -81,11 +80,11 @@ function drawGraph(data) {
                 let transactionInfo = foundEdge.transactionInfo;
                 if(transactionInfo.error != undefined){
 
-                    let something = $("#"+transactionInfo.to).select("rect");
-                    something.attr("class", "node error");
+                    let elem = $("#"+transactionInfo.to).select("rect");
+                    elem.attr("class", "node error");
                     if(index === 0){
-                        let something = $("#"+transactionInfo.from).select("rect");
-                        something.attr("class", "node error");
+                        let otherElem = $("#"+transactionInfo.from).select("rect");
+                        otherElem.attr("class", "node error");
                     }
                     return errorStyleTooltip("Error: " + transactionInfo.error);
                 }else{
@@ -122,23 +121,16 @@ async function getTransfers() {
 	let pathname = window.location.pathname;
 	let _txhash = pathname.substring(4);
 
-	console.log("Reading transaction: ", _txhash);
-	console.log(hostname);
-
 	if (_txhash.length != 66) {
-		console.log("i am smol");
 		return { err: "Transaction hash length not matching" };
 	}
 
 	let _url = "http://" + hostname + ":3000/transfers/" + _txhash;
-	console.log(_url);
 
 	let response = await fetch(_url);
 
-    var text = await response.text();
-    console.log(text);
-    var data = text ? JSON.parse(text) : {};
-    console.log(data);
+    let text = await response.text();
+    let data = text ? JSON.parse(text) : {};
 	return data;
 }
 

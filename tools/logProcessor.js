@@ -1,13 +1,20 @@
+const knownAddresses = require('./knownAddresses');
 
-const ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+const wethAddress = knownAddresses.wethAddress;
+
+const transactionAndLogTypes = require('./transactionAndLogTypes');
+
+const transfer = transactionAndLogTypes.transfer;
+const deposit = transactionAndLogTypes.deposit;
+const withdraw = transactionAndLogTypes.withdraw;
+const logWithdraw = transactionAndLogTypes.logWithdraw;
 
 function processLogs(logs){
 	let processedLogs = [];
 	for (let i = 0; i < logs.length; i++) {
 		let log = logs[i];
 		let type = log.name.toLowerCase();
-		if(type === 'transfer'){
+		if(type === transfer){
 			let transferEvent = log.events;
 
             addLog(
@@ -19,7 +26,7 @@ function processLogs(logs){
 				type);
             continue;
 		}
-		if(type === 'deposit'){
+		if(type === deposit){
 			let depositEvent = log.events;
             addLog(
                 processedLogs,
@@ -32,7 +39,7 @@ function processLogs(logs){
             continue;
 		}
 
-		if(type === 'withdrawal'){
+		if(type === logWithdraw){
 			let withdrawEvent = log.events;
             addLog(
                 processedLogs,
@@ -40,7 +47,7 @@ function processLogs(logs){
 				log.address.toLowerCase(),
 				withdrawEvent[0].value.toLowerCase(),
 				withdrawEvent[1].value,
-				'withdraw');
+				withdraw);
             continue;
 		}
 	}

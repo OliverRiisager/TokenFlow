@@ -1,8 +1,9 @@
-const withdraw = "withdraw";
-const deposit = "deposit";
-const transfer = "transfer";
-const ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+
+const transactionAndLogTypes = require('./transactionAndLogTypes');
+
+const transfer = transactionAndLogTypes.transfer;
+const deposit = transactionAndLogTypes.deposit;
+const withdraw = transactionAndLogTypes.withdraw;
 
 function combineTxsAndLogs(logs, txs){
 	let combinedTxAndLogs = [...txs];
@@ -14,6 +15,7 @@ function combineTxsAndLogs(logs, txs){
 	}
 	let logsWithNoMatch = findLogsWithNoMatch(logs, txs);
 	let insertions = 0;
+	let secondPassLogs = [];
 	for (let i = 0; i < logsWithNoMatch.length; i++) {
 		const noMatchLog = logsWithNoMatch[i];
 		let logToInsert = noMatchLog.log;
@@ -26,6 +28,7 @@ function combineTxsAndLogs(logs, txs){
 				logToInsert.rawValue === x.rawValue;
 			});
 			foundIndex += insertions;
+			noMatchLog.hasMatch = true;
 			combinedTxAndLogs.splice(foundIndex, 0, logToInsert);
 			insertions++;
 		}
@@ -38,103 +41,101 @@ function combineTxsAndLogs(logs, txs){
 				logToInsert.rawValue === x.rawValue;
 			});
 			foundIndex += insertions + 1;
+			noMatchLog.hasMatch = true;
 			combinedTxAndLogs.splice(foundIndex, 0, logToInsert);
 			insertions++;
 		}
 		//Determine if the transfer requires some token and amount to find location
 		if(logToInsert.type === transfer){
-			let nearestBeforeLogIndexObject = findLogWithMatchInDirection(noMatchLog, true);
-			let nearestAfterLogIndexObject = findLogWithMatchInDirection(noMatchLog, false);
-			let minIndex = 0;
-			let maxIndex = combinedTxAndLogs.length;
-			let minDeposits = 0;
-			let minWithdrawals = 0;
-			let maxDeposits = 0;
-			let maxWithdrawals = 0;
-			if(nearestBeforeLogIndexObject !== null){
-				minIndex = combinedTxAndLogs.findIndex(x => doesLogEqualAddedElement(x, nearestBeforeLogIndexObject.matchLog.log));
-				minDeposits = nearestBeforeLogIndexObject.deposits;
-				minWithdrawals = nearestBeforeLogIndexObject.withdrawals;
-				if(nearestBeforeLogIndexObject.matchLog.log.type === withdraw){
-					minWithdrawals++;
-				}
-				if(minIndex >= 0){
-					minIndex = minIndex + minWithdrawals;
-				}
+			if(tryInsertLogTransfer(noMatchLog, combinedTxAndLogs, secondPassLogs)){
+				insertions++;
 			}
-			if(nearestAfterLogIndexObject !== null){
-				maxIndex = combinedTxAndLogs.findIndex(x => doesLogEqualAddedElement(x, nearestAfterLogIndexObject.matchLog.log));
-				maxDeposits = nearestAfterLogIndexObject.deposits;
-				maxWithdrawals = nearestAfterLogIndexObject.withdrawals;
-				if(nearestAfterLogIndexObject.matchLog.log.type === deposit){
-					maxIndex--;
-				}
-				if(maxIndex >= 0){
-					maxIndex = maxIndex - maxDeposits;
-				}
-			}
-			if(maxIndex < 0){
-				maxIndex = combinedTxAndLogs.length;
-			}
-			if(minIndex < 0){
-				minIndex = 0;
-			}
-			//If the difference is one we know exactly where to place the log
-			if(maxIndex - minIndex === 1){
-				foundIndex = maxIndex;
-			}else{
-				//Store indexes found up until now
-				let newMin = minIndex;
-				let newMax = maxIndex;
-				//Look through the range and shrink it in case any logs show up with greater or smaller log indexes.
-				//This can happen when adding no match logs.
-				for (let i = minIndex; i < maxIndex; i++) {
-					const element = combinedTxAndLogs[i];
-					if(element.isLog){
-						if(element.logIndex < logToInsert.logIndex){
-							newMin++;
-						}
-						if(element.logIndex > logToInsert.logIndex){
-							newMax--;
-						}
-					}
-				}
-				//If this results in a difference of 1, we know exactly where to place the log element
-				if(newMax - newMin === 1){
-					foundIndex = maxIndex;
-				}else{
-					//We have some elements in between that are not logs - figure out how to properly process these
-						//Attempt to check for token similarities etc.
-						console.log("HEHE");
-				}
-			}
-			// let previousLogIndexObject = logIndexObject.matchLog.previousLog;
-
-			// let foundIndex = txs.length;
-			// if(logIndexObject !== null){
-			// 	foundIndex = txs.findIndex(x => doesLogEqualTx(x, logIndexObject.matchLog.log));
-			// 	maxIndex = txs.findIndex(x => doesLogEqualTx())
-			// 	if(foundIndex !== -1){
-			// 		if(logIndexObject.matchLog.log.type === withdraw){
-			// 			foundIndex++;
-			// 		}
-			// 		else if(txs[foundIndex-1].type === "ethTransfer"){
-			// 			foundIndex++;
-			// 		}
-			// 	}
-			// }
-			// foundIndex += insertions;
-			//Check for token equality
-			combinedTxAndLogs.splice(foundIndex, 0, logToInsert);
+		}
+	}
+	for (let index = 0; index < secondPassLogs.length; index++) {
+		const logNoMatch = secondPassLogs[index];
+		if(tryInsertLogTransfer(logNoMatch, combinedTxAndLogs, secondPassLogs, true)){
 			insertions++;
 		}
 	}
 	return combinedTxAndLogs;
 }
 
+function tryInsertLogTransfer(noMatchLog, combinedTxAndLogs, secondPassLogs, secondPass = false){
+	
+	let logToInsert = noMatchLog.log;
+	let nearestBeforeLogIndexObject = findLogWithMatchInDirection(noMatchLog, true);
+	let nearestAfterLogIndexObject = findLogWithMatchInDirection(noMatchLog, false);
+	let minIndex = 0;
+	let maxIndex = combinedTxAndLogs.length;
+	let minWithdrawals = 0;
+	let maxDeposits = 0;
+	let indexFound = false;
+	if(nearestBeforeLogIndexObject !== undefined){
+		minIndex = combinedTxAndLogs.findIndex(x => doesLogEqualAddedElement(x, nearestBeforeLogIndexObject.matchLog.log));
+		minWithdrawals = nearestBeforeLogIndexObject.withdrawals;
+		if(nearestBeforeLogIndexObject.matchLog.log.type === withdraw){
+			minWithdrawals++;
+		}
+		if(minIndex >= 0){
+			minIndex = minIndex + minWithdrawals;
+		}
+		if(minIndex === combinedTxAndLogs.length){
+			foundIndex = combinedTxAndLogs.length;
+			indexFound = true;
+		}
+	}
+	if(nearestAfterLogIndexObject !== undefined){
+		maxIndex = combinedTxAndLogs.findIndex(x => doesLogEqualAddedElement(x, nearestAfterLogIndexObject.matchLog.log));
+		maxDeposits = nearestAfterLogIndexObject.deposits;
+		if(nearestAfterLogIndexObject.matchLog.log.type === deposit){
+			maxIndex--;
+		}
+		if(maxIndex > 0){
+			maxIndex = maxIndex - maxDeposits;
+		}
+		if(maxIndex === 0){
+			foundIndex = maxIndex;
+			indexFound = true;
+		}
+	}
+	if(!indexFound){
+		if(maxIndex < 0){
+			maxIndex = combinedTxAndLogs.length;
+		}
+		if(minIndex < 0){
+			minIndex = 0;
+		}
+		//If the difference is one we know exactly where to place the log
+		if(maxIndex - minIndex === 1){
+			foundIndex = maxIndex;
+		}else{
+			if(secondPass){
+				for (let i = minIndex; i < maxIndex; i++) {
+					const element = combinedTxAndLogs[i];
+					if(element.to === logToInsert.from){
+						//IF we find something override the foundindex - if nothing is found it will continue to be appended using the maxIndex.
+						foundIndex = i+1;
+						break;
+					}
+				}
+	
+			}else{
+				secondPassLogs.push(noMatchLog);
+				return false;
+	
+			}
+		}
+	}
+	noMatchLog.hasMatch = true;
+	combinedTxAndLogs.splice(foundIndex, 0, logToInsert);
+	return true;
+}
+
 function findLogsWithNoMatch(logs, txs){
 	let noMatchLogs = [];
 	let previousLog = undefined;
+	let lastMatchIndex = 0;
 	for (let i = 0; i < logs.length; i++) {
 		let logElement = {log: logs[i]};
 		if(previousLog){
@@ -142,13 +143,10 @@ function findLogsWithNoMatch(logs, txs){
 			logElement.previousLog = previousLog;
 		}
 		let logMatchedAnyTx = false;
-		for (let i = 0; i < txs.length; i++) {
+		for (let i = lastMatchIndex; i < txs.length; i++) {
 			let txElement = txs[i];
-			if(txElement.isMatched){
-				continue;
-			}
 			if(doesLogEqualTx(txElement, logElement.log)){
-				txElement.isMatched = true;
+				lastMatchIndex = i+1;
 				logElement.hasMatch = true;
 				logMatchedAnyTx = true;
 				break;
@@ -219,6 +217,6 @@ function findLogWithMatchInDirection(noMatchLog, backwards = true, steps = 0, de
 			return findLogWithMatchInDirection(logToCheck, backwards, steps, deposits, withdrawals);
 		}
 	}
-	return steps = 0 ? undefined : {matchLog : noMatchLog, steps: steps, deposits: deposits, withdrawals: withdrawals};
+	return steps === 0 ? undefined : {matchLog : noMatchLog, steps: steps, deposits: deposits, withdrawals: withdrawals};
 }
 module.exports = combineTxsAndLogs;

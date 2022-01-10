@@ -19,6 +19,7 @@ class traceProcessor {
       let web3Instance = new Web3(new Web3.providers.HttpProvider(config.httpGethProvider));
       this.web3 = this.extendWeb3(web3Instance);
       this.txs = [];
+
     }
     
    extendWeb3(_web3Instance) {
@@ -39,19 +40,36 @@ class traceProcessor {
 
     async doGetTransfers(txHash){
         
+        this.fireProcessChangedEvent("Getting trace");
         let rawTransferData = await getTrace(txHash, this.web3);
         let callObject = rawTransferData.callObject;
 
+        this.fireProcessChangedEvent("Start processing calls");
         let processedCalls = processCalls(callObject, abiDecoder);
 
         let receipt = rawTransferData.receipt;
+        this.fireProcessChangedEvent("Start processing logs");
 		let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
         let processedLogs = processLogs(decodedLogs);
 
+        this.fireProcessChangedEvent("Combining logs and calls");
         let combinedTxsAndLogs = combineTxsAndLogs(processedLogs, processedCalls);
 
+        this.fireProcessChangedEvent("Translating logs and calls");
         let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
+        this.fireProcessChangedEvent("Done !");
         return nodesAndTxs;
+    }
+
+    fireProcessChangedEvent(processMessage){
+        this.currentProcessMessage = processMessage;
+        if(this.callbackFn !== undefined){
+            this.callbackFn(processMessage);
+        }
+    }
+
+    attachCallback(callbackFn){
+        this.callbackFn = callbackFn;
     }
 }
 

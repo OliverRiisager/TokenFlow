@@ -23,42 +23,44 @@
       <label for="txhash">txhash</label>
       <input type="text" id="txhash" name="txhash">
       <button type="button" id="drawbutton">Draw flow</button> 
-
-      <label for="approvals">show approvals</label>
-      <input type="checkbox" id="approvals" name="approvals">
-
+      <a id="etherscanlink" href="" target="_blank">See transaction on etherscan</a>
+      <div id="progress" class="progress">
+        <label id="progressText" for="progressText"></label>
+      </div>
     </div>
+
+
     <br>
 
     <script>
+      var sse = new EventSource("/sse");
+      sse.addEventListener("progressChanged", ({data}) => {
+          console.log('invoked ' + JSON.stringify(data));
+          document.getElementById('progressText').innerHTML = data + '<br>';
+      }); 
+
+      sse.addEventListener("txHash", ({data}) => {
+          let txString = JSON.parse(data);
+          let linkElem =  document.getElementById('etherscanlink');
+          linkElem.hidden = !txString;
+          document.getElementById('etherscanlink').href = `https://etherscan.io/tx/${txString}`;
+      });
       document.getElementById("drawbutton").addEventListener('click', startDrawing);
 
       function startDrawing(){
         let _txhash = document.getElementById("txhash").value;
+        
         if (_txhash.length != 66){
             alert("Transaction hash length is invalid");
             return;
         }
+
         let hostname = window.location.hostname;
         
         let _url = 'http://' + hostname + ":3000/tx/" + _txhash
         
         window.location.href = _url;
-
-        getTransfersEpic().then(txObj => {{
-          drawGraph(txObj);
-        }});
       }
-
-      document.getElementById("approvals").addEventListener('click', reDraw);
-
-      function reDraw(){
-        if (lastData == undefined || lastData == null){
-          return;
-        }
-        pleaseDraw();
-      }
-
     </script>
     <svg style="min-height: 600px; min-width: 95vw;"><g></svg>
   </body>

@@ -1,10 +1,11 @@
 {
-  "name": "challenge4",
+  "name": "tokenflow",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
     "abi-decoder": "^2.4.0",
+    "better-sse": "^0.7.0",
     "cors": "^2.8.5",
     "ejs": "^3.1.2",
     "express": "^4.17.1",

@@ -14,6 +14,7 @@ body {
 
 
 .node.error rect {
+  content: "\26A0";
   fill: #fa9d9d;
 }
 .edgePath path {
@@ -29,6 +30,27 @@ text {
 .node text {
   pointer-events: none;
 }
+
+.tipsy .transactionPopup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tipsy .transactionPopup.error {
+  fill: #fa9d9d;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tofrom {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  white-space: nowrap;
+}
+
 /* This styles the title of the tooltip */
 .tipsy .info {
   font-size: 1.5em;

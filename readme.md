@@ -1,13 +1,24 @@
 http://tokenflow.xyz
 
-# Example Config setup:
+# Example Usage setup:
+First setup provider using the configService :
 
-var config = {};
+var configService = require('tokenflow-geth/tools/configService');
 
-config.httpGethProvider = "(YOUR GETH PROVIDER)";
+Choose from the following : 
 
-module.exports = config;
+  configService.setConfigFromAddress("(YOUR GETH PROVIDER)");
+    OR
+  let configObj = {httpGethProvider: "(YOUR GETH PROVIDER)"}
+  configService.setConfig(configObj);
 
+then you can use the traceprocessorobject
+
+var traceprocessor = require('tokenflow-geth/tools/traceProcessor');
+
+let traceprocessorInstance = new traceprocessor();
+
+traceProcessorInstance.getTransfers("(SOME TRANSACTION HASH)");
 
 # Test transactions:
 

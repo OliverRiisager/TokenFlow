@@ -111,6 +111,7 @@ function tryInsertLogTransfer(noMatchLog, combinedTxAndLogs, secondPassLogs, sec
 			foundIndex = maxIndex;
 		}else{
 			if(secondPass){
+				foundIndex = maxIndex+1;
 				for (let i = minIndex; i < maxIndex; i++) {
 					const element = combinedTxAndLogs[i];
 					if(element.to === logToInsert.from){
@@ -176,29 +177,6 @@ function doesLogEqualTx(tx, logInfo){
     logInfo.to === tx.to &&
     logInfo.token === tx.token &&
     logInfo.rawValue === tx.rawValue;
-}
-
-function findNearestLogWithMatch(noMatchLog){
-
-	let backwardsResult = noMatchLog.previousLog ? findLogWithMatchInDirection(noMatchLog) : undefined;
-	let forwardsResult = noMatchLog.nextLog ? findLogWithMatchInDirection(noMatchLog, false) : undefined;
-
-	let backwardsSteps = backwardsResult ? backwardsResult.steps : -1;
-	let forwardsSteps = forwardsResult ? forwardsResult.steps : -1;
-
-	if(backwardsSteps === -1 && forwardsSteps === -1){
-		return {matchLog : noMatchLog, steps: -1};
-	}
-	if(backwardsSteps === forwardsSteps){
-		return backwardsResult;
-	}
-	if(forwardsSteps < 0){
-		return backwardsResult;
-	}
-	if(backwardsResult < 0){
-		return forwardsResult;
-	}
-	return forwardsResult;
 }
 
 function findLogWithMatchInDirection(noMatchLog, backwards = true, steps = 0, deposits = 0, withdrawals = 0){

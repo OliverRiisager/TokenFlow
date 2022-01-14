@@ -5,7 +5,7 @@ const combineTxsAndLogs = require('./callLogCombiner');
 const translateCallsAndLogs = require('./callLogTranslator');
 const abiDecoder = require('abi-decoder');
 const Web3 = require("web3");
-const config = require("../config");
+const configProvider = require('./configService');
 
 const erc20abi = require("../public/abis/erc20.json");
 const wethAbi = require("../public/abis/wrappedEther.json");
@@ -16,7 +16,7 @@ class traceProcessor {
       abiDecoder.addABI(erc20abi);
       abiDecoder.addABI(wethAbi);
       
-      let web3Instance = new Web3(new Web3.providers.HttpProvider(config.httpGethProvider));
+      let web3Instance = new Web3(new Web3.providers.HttpProvider(configProvider.config.httpGethProvider));
       this.web3 = this.extendWeb3(web3Instance);
       this.txs = [];
 

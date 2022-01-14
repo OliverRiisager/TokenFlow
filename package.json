@@ -1,8 +1,9 @@
 {
   "name": "tokenflow-geth",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "http://tokenflow.xyz",
-  "main": "traceProcessor.js",
+  "main": "traceProcessor",
+  "typings": "traceProcessor",
   "dependencies": {
     "abi-decoder": "^2.4.0",
     "better-sse": "^0.7.0",

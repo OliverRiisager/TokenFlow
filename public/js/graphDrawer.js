@@ -1,5 +1,5 @@
 function drawGraph(data) {
-	var g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({
+	const g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({
 		rankdir: "LR"
 	});
 
@@ -63,19 +63,19 @@ function drawGraph(data) {
 	});
 
 	// Create the renderer
-	var render = new dagreD3.render();
+	const render = new dagreD3.render();
 
-	var svg = d3.select("svg");
-	var inner = svg.append("g");
+	const svg = d3.select("svg");
+	const inner = svg.append("g");
 
-	var zoom = d3.zoom()
+	const zoom = d3.zoom()
         .on("zoom", function () {
             inner.attr("transform", d3.event.transform);
         });
 	svg.call(zoom);
 
     // Simple function to style the tooltip for the given node.
-    var styleTooltip = function(to, from, type, isLog) {
+    const styleTooltip = function(to, from, type, isLog) {
        return `<div class='transactionPopup'>
             <div class='tofrom'>
                 <p>To : ${to}</p>
@@ -87,7 +87,7 @@ function drawGraph(data) {
     };
 
     // Simple function to style the tooltip for the given node.
-    var errorStyleTooltip = function(error, to, from, type) {
+    const errorStyleTooltip = function(error, to, from, type) {
             return `<div class='transactionPopup error'>
             <p class="error">Error : ${error}</p>
             <div class='tofrom'>
@@ -107,13 +107,6 @@ function drawGraph(data) {
                 let foundEdge = g.edge(v);
                 let transactionInfo = foundEdge.transactionInfo;
                 if(transactionInfo.error != undefined){
-
-                    // let elem = $("#"+transactionInfo.to).select("rect");
-                    // elem.attr("class", "node error");
-                    // if(index === 0){
-                    //     let otherElem = $("#"+transactionInfo.from).select("rect");
-                    //     otherElem.attr("class", "node error");
-                    // }
                     return errorStyleTooltip("Error: " + transactionInfo.error, transactionInfo.to, transactionInfo.from, transactionInfo.type);
                 }else{
                     return styleTooltip(transactionInfo.to, transactionInfo.from, transactionInfo.type, transactionInfo.isLog != undefined);
@@ -133,14 +126,14 @@ function drawGraph(data) {
                 $(this).tipsy(tipsyObj); 
             });
 
-	var graphWidth = g.graph().width;
-    var graphHeight = g.graph().height;
-    var width = parseInt(svg.style("width").replace(/px/, ""));
-    var height = parseInt(svg.style("height").replace(/px/, ""));
-    var zoomScale = Math.min(width / graphWidth, height / graphHeight);
-    var translateX = (width / 2) - ((graphWidth * zoomScale) / 2)
-    var translateY = (height / 2) - ((graphHeight * zoomScale) / 2);
-	var svgZoom = svg.transition().duration(500);
+	const graphWidth = g.graph().width;
+    const graphHeight = g.graph().height;
+    const width = parseInt(svg.style("width").replace(/px/, ""));
+    const height = parseInt(svg.style("height").replace(/px/, ""));
+    const zoomScale = Math.min(width / graphWidth, height / graphHeight);
+    const translateX = (width / 2) - ((graphWidth * zoomScale) / 2)
+    const translateY = (height / 2) - ((graphHeight * zoomScale) / 2);
+	const svgZoom = svg.transition().duration(500);
 	svgZoom.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(zoomScale));	
 }
 

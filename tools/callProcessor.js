@@ -118,7 +118,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
     }
     if(callObject.calls){
         for (const _callObject of callObject.calls) {
-            doProcessCall(processedCallsArray, _callObject, abiDecoder, thisCallType);
+            doProcessCall(processedCallsArray, _callObject, abiDecoder);
         }
     }
 }

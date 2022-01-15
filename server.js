@@ -1,12 +1,15 @@
 const express = require("express");
 const {createSession} = require("better-sse");
 
-var traceProcessor = require("./tools/traceProcessor");
+const config = require('./config');
+const configService = require('./tools/configService');
+const traceProcessor = require("./tools/traceProcessor");
 
 const cors = require("cors");
 const app = express();
 const { PORT = 3000 } = process.env;
 
+configService.getInstance().setConfig(config);
 const traceProcessorInstance = new traceProcessor();
 let cachedTxHash = undefined;
 

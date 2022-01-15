@@ -1,29 +1,39 @@
 
 
-const config = {};
+class configService {
+    config = {};
 
-function setConfig(configObj){
-    if(configObj.hasOwnProperty(httpGethProvider)){
-        config = configObj;
+    static instance;
+
+    constructor() { }
+
+    static getInstance() {
+        if (!configService.instance) {
+            configService.instance = new configService();
+        }
+
+        return configService.instance;
     }
-    
-    throw new Error("config obj doesnt contain httpGethProvider value");
+
+    setConfig(configObj){
+        if(configObj.httpGethProvider === undefined){
+            throw new Error("config obj doesnt contain httpGethProvider value");
+        }
+        
+        this.config = configObj;
+    }
+
+    setConfigFromAddress(providerAddress){
+
+        if(typeof(providerAddress) !== typeof("")){
+            throw new Error("providerAddress is not of correct type");
+        }
+        if(providerAddress){
+            this.config.httpGethProvider = providerAddress;
+        }else{
+            throw new Error("providerAddress doest not contain a proper string");
+        }
+    }
 }
 
-function setConfigFromAddress(providerAddress){
-
-    if(typeof(providerAddress) !== typeof("")){
-        throw new Error("providerAddress is not of correct type");
-    }
-    if(providerAddress){
-        config.httpGethProvider = providerAddress;
-    }else{
-        throw new Error("providerAddress doest not contain a proper string");
-    }
-}
-
-module.exports = {
-    setConfig,
-    setConfigFromAddress,
-    config
-}
+module.exports = configService

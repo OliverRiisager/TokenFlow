@@ -5,6 +5,27 @@ const transfer = transactionAndLogTypes.transfer;
 const deposit = transactionAndLogTypes.deposit;
 const withdraw = transactionAndLogTypes.withdraw;
 
+function insertLogs(processedLogs, processedCalls){
+	var combinedTxsAndLogs = [];
+	let noMatchLogs = findLogsWithNoMatch(processedLogs, processedCalls);
+	for (let index = 0; index < processedCalls.length; index++) {
+		const element = processedCalls[index];
+		combinedTxsAndLogs.push(element);
+		if(element.logs === undefined || element.logs.length < 1){
+			continue;
+		}else{
+			for (let j = 0; j < element.logs.length; j++) {
+				const logIndex = element.logs[j].logIndex;
+				var foundElement = noMatchLogs.find(x => x.logIndex === logIndex);
+				if(foundElement != undefined){
+					combinedTxsAndLogs.push(foundElement);
+				}
+			}
+		}
+	}
+	return combinedTxsAndLogs;
+}
+
 function combineTxsAndLogs(logs, txs){
 	let combinedTxAndLogs = [...txs];
 	if(logs.length === 0){
@@ -135,29 +156,21 @@ function tryInsertLogTransfer(noMatchLog, combinedTxAndLogs, secondPassLogs, sec
 
 function findLogsWithNoMatch(logs, txs){
 	let noMatchLogs = [];
-	let previousLog = undefined;
 	let lastMatchIndex = 0;
 	for (let i = 0; i < logs.length; i++) {
-		let logElement = {log: logs[i]};
-		if(previousLog){
-			previousLog.nextLog = logElement;
-			logElement.previousLog = previousLog;
-		}
 		let logMatchedAnyTx = false;
-		for (let i = lastMatchIndex; i < txs.length; i++) {
-			let txElement = txs[i];
-			if(doesLogEqualTx(txElement, logElement.log)){
-				lastMatchIndex = i+1;
-				logElement.hasMatch = true;
+		let log = logs[i];
+		for (let j = lastMatchIndex; j < txs.length; j++) {
+			let txElement = txs[j];
+			if(doesLogEqualTx(txElement, log)){
+				lastMatchIndex = j+1;
 				logMatchedAnyTx = true;
 				break;
 			}
 		}
 		if(!logMatchedAnyTx){
-			logElement.hasMatch = false;
-			noMatchLogs.push(logElement);
+			noMatchLogs.push(log);
 		}
-		previousLog = logElement;
 	}
 	return noMatchLogs;
 }
@@ -197,4 +210,4 @@ function findLogWithMatchInDirection(noMatchLog, backwards = true, steps = 0, de
 	}
 	return steps === 0 ? undefined : {matchLog : noMatchLog, steps: steps, deposits: deposits, withdrawals: withdrawals};
 }
-module.exports = combineTxsAndLogs;
+module.exports = insertLogs;

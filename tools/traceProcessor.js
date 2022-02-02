@@ -1,7 +1,7 @@
 const getTrace = require('./traceGetter');
 const processCalls = require('./callProcessor');
 const processLogs = require('./logProcessor');
-const combineTxsAndLogs = require('./callLogCombiner');
+const insertLogs = require('./callLogCombiner');
 const translateCallsAndLogs = require('./callLogTranslator');
 const abiDecoder = require('abi-decoder');
 const Web3 = require("web3");
@@ -49,11 +49,12 @@ class traceProcessor {
 
         let receipt = rawTransferData.receipt;
         this.fireProcessChangedEvent("Start processing logs");
+        abiDecoder.keepNonDecodedLogs();
 		let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
         let processedLogs = processLogs(decodedLogs);
 
         this.fireProcessChangedEvent("Combining logs and calls");
-        let combinedTxsAndLogs = combineTxsAndLogs(processedLogs, processedCalls);
+        var combinedTxsAndLogs =insertLogs(processedLogs, processedCalls);
 
         this.fireProcessChangedEvent("Translating logs and calls");
         let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);

@@ -13,6 +13,9 @@ function processLogs(logs){
 	let processedLogs = [];
 	for (let i = 0; i < logs.length; i++) {
 		let log = logs[i];
+		if(log == undefined){
+			continue;
+		}
 		let type = log.name.toLowerCase();
 		if(type === transfer){
 			let transferEvent = log.events;
@@ -23,7 +26,8 @@ function processLogs(logs){
 				transferEvent[1].value.toLowerCase(),
 				transferEvent[0].value.toLowerCase(),
 				transferEvent[2].value,
-				type);
+				type,
+				i);
             continue;
 		}
 		if(type === deposit){
@@ -34,7 +38,8 @@ function processLogs(logs){
 				depositEvent[0].value.toLowerCase(),
 				log.address.toLowerCase(),
 				depositEvent[1].value,
-				type);
+				type,
+				i);
 
             continue;
 		}
@@ -47,14 +52,15 @@ function processLogs(logs){
 				log.address.toLowerCase(),
 				withdrawEvent[0].value.toLowerCase(),
 				withdrawEvent[1].value,
-				withdraw);
+				withdraw,
+				i);
             continue;
 		}
 	}
     return processedLogs;
 }
 
-function addLog(processedLogs, token, to, from, rawValue, type){
+function addLog(processedLogs, token, to, from, rawValue, type, logIndex){
     processedLogs.push({
         token: token,
         to: to,
@@ -62,7 +68,7 @@ function addLog(processedLogs, token, to, from, rawValue, type){
         rawValue: rawValue,
         type: type,
 		isLog: true,
-		logIndex: processedLogs.length
+		logIndex: logIndex
     });
 }
 

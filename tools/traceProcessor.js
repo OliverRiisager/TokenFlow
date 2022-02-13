@@ -40,26 +40,33 @@ class traceProcessor {
 
     async doGetTransfers(txHash){
         
-        this.fireProcessChangedEvent("Getting trace");
-        let rawTransferData = await getTrace(txHash, this.web3);
-        let callObject = rawTransferData.callObject;
-
-        this.fireProcessChangedEvent("Start processing calls");
-        let processedCalls = processCalls(callObject, abiDecoder);
-
-        let receipt = rawTransferData.receipt;
-        this.fireProcessChangedEvent("Start processing logs");
-        abiDecoder.keepNonDecodedLogs();
-		let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
-        let processedLogs = processLogs(decodedLogs);
-
-        this.fireProcessChangedEvent("Combining logs and calls");
-        var combinedTxsAndLogs =insertLogs(processedLogs, processedCalls);
-
-        this.fireProcessChangedEvent("Translating logs and calls");
-        let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
-        this.fireProcessChangedEvent("Done !");
-        return nodesAndTxs;
+        try {
+            this.fireProcessChangedEvent("Getting trace");
+            let rawTransferData = await getTrace(txHash, this.web3);
+            if(rawTransferData.error !== undefined){
+                throw rawTransferData.error;
+            }
+            let callObject = rawTransferData.callObject;
+    
+            this.fireProcessChangedEvent("Start processing calls");
+            let processedCalls = processCalls(callObject, abiDecoder);
+    
+            let receipt = rawTransferData.receipt;
+            this.fireProcessChangedEvent("Start processing logs");
+            abiDecoder.keepNonDecodedLogs();
+            let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
+            let processedLogs = processLogs(decodedLogs);
+    
+            this.fireProcessChangedEvent("Combining logs and calls");
+            var combinedTxsAndLogs =insertLogs(processedLogs, processedCalls);
+    
+            this.fireProcessChangedEvent("Translating logs and calls");
+            let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
+            this.fireProcessChangedEvent("Done !");
+            return nodesAndTxs;
+        }catch(e){
+            this.fireProcessChangedEvent(e.toString());
+        }
     }
 
     fireProcessChangedEvent(processMessage){

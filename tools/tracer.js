@@ -11,12 +11,20 @@ let logInsertion =
 //LOG0 - 4
 '   var logElement = {};'+
 '   if (opcode == 0xA0 || opcode == 0xA1 || opcode == 0xA2 || opcode == 0xA3 || opcode == 0xA4) {' +
-'     if(this.previousCall.logs === undefined){' +
-'           this.previousCall.logs = [];' +
-'     }' +
 '     logElement.logIndex = this.logIndex;' +
-'     this.previousCall.logs.push(logElement);' +
 '     this.logIndex++;' +
+'	  if(this.previousCall === undefined){'+
+'		this.logsNoCall.push(logElement);'+
+'     	return;'+
+'	  }'+
+'     if(this.previousCall.logs === undefined){' +
+'       this.previousCall.logs = [];' +
+'		for (var i = 0; i < this.logsNoCall.length; i++) {'+
+'     		this.previousCall.logs.push(logsNoCall[i]);' +
+'     	}' +
+'       this.logsNoCall.logs = [];' +
+'     }' +
+'     this.previousCall.logs.push(logElement);' +
 '     return;'+
 '   }';
 
@@ -36,25 +44,6 @@ let step =
 '			var op = log.op.toString();'+
 '		}'+
         logInsertion+
-		// If a new contract is being created, add to the call stack
-        // If Create or Create2
-'		if (syscall && (opcode == 0xf0 || opcode == 0xf5)) {'+
-'			var inOff = log.stack.peek(1).valueOf();'+
-'			var inEnd = inOff + log.stack.peek(2).valueOf();'+
-
-			// Assemble the internal call report and store for completion
-'			var call = {};'+
-'			call.type = op;'+
-'			call.from = toHex(log.contract.getAddress());'+
-'			call.input = toHex(log.memory.slice(inOff, inEnd));'+
-'			call.gasIn = log.getGas();'+
-'			call.gasCost = log.getCost();'+
-'			call.value = "0x" + log.stack.peek(0).toString(16);'+
-'			this.callstack.push(call);'+
-'           this.previousCall = call;'+
-'			this.descended = true;'+
-'			return;'+
-'		}'+
 
 		// If a contract is being self destructed, gather that as a subcall too
 '		if (syscall && opcode == 0xff) {'+// If selfdestruct
@@ -73,17 +62,15 @@ let step =
 '			return;'+
 '		}'+
         // If a new method invocation is being done, add to the call stack
-'		if (syscall && (opcode == 0xF1 || opcode == 0xF2 || opcode == 0xF4 || opcode == 0xFA)) {'+ //CALL, CALLCODE, DELEGATECALL or STATICCALL
+'		if (syscall && (opcode == 0xF1 || opcode == 0xF2)) {'+ //CALL, CALLCODE
         // Skip any pre-compile invocations, those are just fancy opcodes
 '			var to = toAddress(log.stack.peek(1).toString(16));'+
 '			if (isPrecompiled(to)) {'+
 '				return;'+
 '			}'+
-            //DELGATECALL or STATICCALL
-'			var off = (opcode == 0xF4 || opcode == 0xFA ? 0 : 1);'+
 
-'			var inOff = log.stack.peek(2 + off).valueOf();'+
-'			var inEnd = inOff + log.stack.peek(3 + off).valueOf();'+
+'			var inOff = log.stack.peek(3).valueOf();'+
+'			var inEnd = inOff + log.stack.peek(4).valueOf();'+
 
 			// Assemble the internal call report and store for completion
 '			var call = {};'+
@@ -93,8 +80,8 @@ let step =
 '			call.input = toHex(log.memory.slice(inOff, inEnd));'+
 '			call.gasIn = log.getGas();'+
 '			call.gasCost = log.getCost();'+
-'			call.outOff = log.stack.peek(4 + off).valueOf();'+
-'			call.outLen = log.stack.peek(5 + off).valueOf();'+
+'			call.outOff = log.stack.peek(5).valueOf();'+
+'			call.outLen = log.stack.peek(6).valueOf();'+
 '			if (op != "DELEGATECALL" && op != "STATICCALL") {'+
 '				call.value = "0x" + log.stack.peek(2).toString(16);'+
 '			}'+
@@ -125,19 +112,7 @@ let step =
 			// Pop off the last call and get the execution results
 '			var call = this.callstack.pop();'+
 
-'			if (call.type == "CREATE" || call.type == "CREATE2") {'+
-				// If the call was a CREATE, retrieve the contract address and output code
-'				call.gasUsed = "0x" + bigInt(call.gasIn - call.gasCost - log.getGas()).toString(16);'+
-'				delete call.gasIn; delete call.gasCost;'+
-
-'				var ret = log.stack.peek(0);'+
-'				if (!ret.equals(0)) {'+
-'					call.to     = toHex(toAddress(ret.toString(16)));'+
-'					call.output = toHex(db.getCode(toAddress(ret.toString(16))));'+
-'				} else if (call.error === undefined) {'+
-'					call.error = "internal failure";'+ // TODO(karalabe): surface these faults somehow
-'				}'+
-'			} else {'+
+'			if (call.type != "CREATE" && call.type != "CREATE2") {'+
 				// If the call was a contract call, retrieve the gas usage and output
 '				if (call.gas !== undefined) {'+
 '					call.gasUsed = "0x" + bigInt(call.gasIn - call.gasCost + call.gas - log.getGas()).toString(16);'+
@@ -261,6 +236,7 @@ let fullTracer = '{'+
 // an inner call.
 '	descended: false,'+
 '	logIndex: 0,'+
+'	logsNoCall: [],'+
 '	previousCall: null,'+
     step+
     fault+

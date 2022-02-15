@@ -1,6 +1,6 @@
 {
   "name": "tokenflow-geth",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "http://tokenflow.xyz",
   "main": "traceProcessor",
   "typings": "traceProcessor",
@@ -11,13 +11,6 @@
     "ejs": "^3.1.2",
     "express": "^4.17.1",
     "web3": "^1.7.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.3"
-  },
-  "scripts": {
-    "development": "nodemon server.js -e js,ejs --trace-warnings",
-    "start": "node server.js"
   },
   "author": "Oliver Riisager",
   "license": "ISC",

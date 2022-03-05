@@ -2,7 +2,7 @@
 import {tracer} from './tracer';
 import * as tracerTypes from './tracerTypes';
 
-async function getTrace(txhash, web3) {
+export async function getTrace(txhash, web3) {
     let gethTrace = await getGethTrace(web3, txhash);
     return gethTrace;
 }
@@ -19,4 +19,3 @@ async function getGethTrace(web3, txhash) {
         return {callObject: null, receipt: null, error: error};
     }
 }
-module.exports = getTrace;

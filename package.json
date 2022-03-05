@@ -2,8 +2,8 @@
   "name": "tokenflow-geth",
   "version": "1.2.4",
   "description": "http://tokenflow.xyz",
-  "main": "traceProcessor",
-  "typings": "traceProcessor",
+  "main": "./src/index.ts",
+  "typings": "./src/index.d.ts",
   "dependencies": {
     "abi-decoder": "^2.4.0",
     "better-sse": "^0.7.0",
@@ -20,6 +20,17 @@
   },
   "bugs": {
     "url": "https://github.com/SpaghettiTheYeti/TokenFlow/issues"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/express": "^4.17.13",
+    "@types/node": "14.0.13",
+    "create-ts-index": "^1.14.0",
+    "nodemon": "^2.0.3"
+  },
+  "scripts": {
+    "development": "nodemon server.ts -e js,ejs --trace-warnings",
+    "start": "node server.ts"
   },
   "homepage": "https://github.com/SpaghettiTheYeti/TokenFlow#readme"
 }

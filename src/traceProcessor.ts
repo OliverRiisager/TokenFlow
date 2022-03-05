@@ -1,17 +1,19 @@
-const getTrace = require('./traceGetter');
-const processCalls = require('./callProcessor');
-const processLogs = require('./logProcessor');
-const insertLogs = require('./callLogCombiner');
-const translateCallsAndLogs = require('./callLogTranslator');
-const abiDecoder = require('abi-decoder');
-const Web3 = require("web3");
-const configService = require('./configService');
+import {getTrace} from './traceGetter';
+import processCalls from './callProcessor';
+import {processLogs} from './logProcessor';
+import insertLogs from './callLogCombiner';
+import translateCallsAndLogs from './callLogTranslator';
+import abiDecoder from 'abi-decoder';
+import Web3 from "web3";
+import {configService} from './configService';
 
-const erc20abi = require("../public/abis/erc20.json");
-const wethAbi = require("../public/abis/wrappedEther.json");
+import erc20abi from "../public/abis/erc20.json";
+import wethAbi from "../public/abis/wrappedEther.json";
 
-class traceProcessor {
+export class traceProcessor {
 
+    web3:any;
+    txs:any;
     constructor(){
       abiDecoder.addABI(erc20abi);
       abiDecoder.addABI(wethAbi);
@@ -65,5 +67,3 @@ class traceProcessor {
         }
     }
 }
-
-module.exports = traceProcessor;

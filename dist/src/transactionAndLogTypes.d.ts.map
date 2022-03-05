@@ -1,0 +1,1 @@
+{"version":3,"file":"transactionAndLogTypes.d.ts","sourceRoot":"","sources":["../../src/transactionAndLogTypes.ts"],"names":[],"mappings":"AACA,aAAK,OAAO;IACR,QAAQ,aAAa;IACrB,YAAY,iBAAiB;IAC7B,OAAO,YAAY;IACnB,QAAQ,aAAa;IACrB,WAAW,eAAe;IAC1B,WAAW,gBAAiB;IAC5B,OAAO,YAAY;CACtB;AAED,OAAO,EAAC,OAAO,EAAC,CAAA"}

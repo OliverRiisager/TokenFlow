@@ -9,7 +9,7 @@ const deposit = transactionAndLogTypes.deposit;
 const withdraw = transactionAndLogTypes.withdraw;
 const logWithdraw = transactionAndLogTypes.logWithdraw;
 
-function processLogs(logs){
+export function processLogs(logs){
 	let processedLogs = [];
 	for (let i = 0; i < logs.length; i++) {
 		let log = logs[i];
@@ -71,5 +71,3 @@ function addLog(processedLogs, token, to, from, rawValue, type, logIndex){
 		logIndex: logIndex
     });
 }
-
-module.exports = processLogs;

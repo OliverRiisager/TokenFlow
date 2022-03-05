@@ -41,43 +41,28 @@ class traceProcessor {
     async doGetTransfers(txHash){
         
         try {
-            this.fireProcessChangedEvent("Getting trace");
             let rawTransferData = await getTrace(txHash, this.web3);
             if(rawTransferData.error !== undefined){
                 throw rawTransferData.error;
             }
             let callObject = rawTransferData.callObject;
     
-            this.fireProcessChangedEvent("Start processing calls");
             let processedCalls = processCalls(callObject, abiDecoder);
     
             let receipt = rawTransferData.receipt;
-            this.fireProcessChangedEvent("Start processing logs");
+
             abiDecoder.keepNonDecodedLogs();
             let decodedLogs = abiDecoder.decodeLogs(receipt.logs);
             let processedLogs = processLogs(decodedLogs);
     
-            this.fireProcessChangedEvent("Combining logs and calls");
             var combinedTxsAndLogs =insertLogs(processedLogs, processedCalls);
     
-            this.fireProcessChangedEvent("Translating logs and calls");
             let nodesAndTxs = await translateCallsAndLogs(combinedTxsAndLogs, this.web3, receipt.from, erc20abi);
-            this.fireProcessChangedEvent("Done !");
             return nodesAndTxs;
         }catch(e){
-            this.fireProcessChangedEvent(e.toString());
+            console.log("Unexpected Exception : " + e);
+            throw e;
         }
-    }
-
-    fireProcessChangedEvent(processMessage){
-        this.currentProcessMessage = processMessage;
-        if(this.callbackFn !== undefined){
-            this.callbackFn(processMessage);
-        }
-    }
-
-    attachCallback(callbackFn){
-        this.callbackFn = callbackFn;
     }
 }
 

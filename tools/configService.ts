@@ -1,13 +1,14 @@
 
+import {config} from '../config';
 
 class configService {
-    config = {};
 
-    static instance;
+    config: config;
+    static instance : configService;
 
     constructor() { }
 
-    static getInstance() {
+    static getInstance()  : configService{
         if (!configService.instance) {
             configService.instance = new configService();
         }
@@ -15,7 +16,7 @@ class configService {
         return configService.instance;
     }
 
-    setConfig(configObj){
+    setConfig(configObj: config) : void{
         if(configObj.httpGethProvider === undefined){
             throw new Error("config obj doesnt contain httpGethProvider value");
         }
@@ -23,7 +24,7 @@ class configService {
         this.config = configObj;
     }
 
-    setConfigFromAddress(providerAddress){
+    setConfigFromAddress(providerAddress) : void{
 
         if(typeof(providerAddress) !== typeof("")){
             throw new Error("providerAddress is not of correct type");
@@ -36,4 +37,4 @@ class configService {
     }
 }
 
-module.exports = configService
+export {configService};

@@ -243,5 +243,4 @@ let fullTracer = '{'+
     result+
     finalize+
 '}'
-
-module.exports = fullTracer;
+export {fullTracer as tracer};

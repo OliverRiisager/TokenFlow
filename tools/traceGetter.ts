@@ -1,5 +1,5 @@
 
-const tracer = require('./tracer');
+import {tracer} from './tracer';
 
 async function getTrace(txhash, web3) {
     let gethTrace = await getGethTrace(web3, txhash);

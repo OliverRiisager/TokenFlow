@@ -1,6 +1,9 @@
+import { ProcessedCall } from "./model";
+import { ProcessedLog } from "./model";
+import { Transfer } from "./model";
 
-function insertLogs(processedLogs, processedCalls){
-	var combinedTxsAndLogs = [];
+export function insertLogs(processedLogs : ProcessedLog[], processedCalls:ProcessedCall[]) : Transfer[]{
+	var combinedTxsAndLogs: Transfer[] = [];
 	let noMatchLogs = findLogsWithNoMatch(processedLogs, processedCalls);
 	for (let index = 0; index < processedCalls.length; index++) {
 		const element = processedCalls[index];
@@ -20,8 +23,8 @@ function insertLogs(processedLogs, processedCalls){
 	return combinedTxsAndLogs;
 }
 
-function findLogsWithNoMatch(logs, txs){
-	let noMatchLogs = [];
+function findLogsWithNoMatch(logs:ProcessedLog[], txs:ProcessedCall[]) : ProcessedLog[]{
+	let noMatchLogs:ProcessedLog[] = [];
 	let lastMatchIndex = 0;
 	for (let i = 0; i < logs.length; i++) {
 		let logMatchedAnyTx = false;
@@ -41,11 +44,10 @@ function findLogsWithNoMatch(logs, txs){
 	return noMatchLogs;
 }
 
-function doesLogEqualTx(tx, logInfo){
+function doesLogEqualTx(tx:ProcessedCall, logInfo:ProcessedLog){
     return tx.logCompareType === logInfo.type &&
     logInfo.from === tx.from &&
     logInfo.to === tx.to &&
     logInfo.token === tx.token &&
     logInfo.rawValue === tx.rawValue;
 }
-module.exports = insertLogs;

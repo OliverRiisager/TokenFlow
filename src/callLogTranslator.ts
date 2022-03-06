@@ -1,13 +1,15 @@
-const utility = require('./utility');
-const knownAddresses = require('./knownAddresses');
+import { getValue }from './utility';
+import { contractAddressToNames, tokenAddressToSymbolDecimals, SymbolDecimal } from './knownAddresses'
+import { Transfer } from './model';
+import Web3 from 'web3';
+import { BatchRequest } from 'web3-core';
 
-let contractAddressToName = knownAddresses.contractAddressToName;
-let tokenAddressToName = knownAddresses.tokenAddressToName;
-
-async function translateCallsAndLogs(combinedLogsAndTxs, web3, senderAddress, erc20abi){
-    let nodes = [];
-    let tokenAddresses = [];
-
+export async function translateCallsAndLogs(combinedLogsAndTxs : Transfer[], web3:Web3, senderAddress:string, erc20abi:any) : 
+	Promise<{transfers:Transfer[], nodes:{address: string|null|undefined, name:string|null|undefined}[]}> 
+{
+    let nodes:string[] = [];
+    let tokenAddresses:string[] = [];
+	
     combinedLogsAndTxs.forEach(element => {
         if(nodes.indexOf(element.from) === -1){
             nodes.push(element.from);
@@ -25,32 +27,34 @@ async function translateCallsAndLogs(combinedLogsAndTxs, web3, senderAddress, er
     } catch(e) {
         console.log('Error encountered when mapping adresses to names ' + e);
     }
-
-    nodes = nodes.map((node) => {
+    let mappedNodes:{address: string, name:string|null|undefined}[] = [];
+    mappedNodes = nodes.map((node) => {
         return {
             address: node,
-            name: node === senderAddress ? 'sender' : contractAddressToName[node]
+            name: node === senderAddress ? 'sender' : contractAddressToNames.HasContractAddress(node) ? contractAddressToNames.GetContractName(node) : node
         }
     });
 
     combinedLogsAndTxs.forEach(tx => {
-        tx.tokenName = tokenAddressToName[tx.token].symbol;
-        tx.value = utility.getValue(tx.rawValue, tokenAddressToName[tx.token].decimals, true);
+		let tokenSymbolDecimal = tokenAddressToSymbolDecimals.GetTokenSymbolDecimal(tx.token);
+		tx.tokenName = tokenSymbolDecimal !== undefined ? tokenSymbolDecimal?.symbol : tx.token;
+		let decimal = tokenSymbolDecimal !== undefined ? tokenSymbolDecimal?.decimals : 18;
+        tx.value = getValue(tx.rawValue, decimal !== undefined ? decimal : 18, true);
     });
 
     return 	{
         transfers: combinedLogsAndTxs,
-        nodes: nodes
+        nodes: mappedNodes
     }
 }
 
-async function mapAddressesToNames(tokenAddresses, contractAddresses, web3, erc20abi) {
+async function mapAddressesToNames(tokenAddresses : string[], contractAddresses : string[], web3 : Web3, erc20abi : any) : Promise<void> {
 	let batch = new web3.BatchRequest();
 
-	let tokenCallObjects = [];
+	let tokenCallObjects : any[] = [];
 	
 	for (const tokenAddress of tokenAddresses) {
-		if(!tokenAddressToName.hasOwnProperty(tokenAddress)) {
+		if(!tokenAddressToSymbolDecimals.HasTokenAddress(tokenAddress)) {
 			let erc20Contract = await new web3.eth.Contract(erc20abi, tokenAddress);
 			let symbolCall = erc20Contract.methods.symbol().call;
 			let decimalsCall = erc20Contract.methods.decimals().call;
@@ -58,10 +62,10 @@ async function mapAddressesToNames(tokenAddresses, contractAddresses, web3, erc2
 		}
 	}
 
-	let contractCallObjects = [];
+	let contractCallObjects : any[] = [];
 
 	for (const contractAddress of contractAddresses) {
-		if(!contractAddressToName.hasOwnProperty(contractAddress)) {
+		if(contractAddressToNames.HasContractAddress(contractAddress)) {
 			let erc20Contract = await new web3.eth.Contract(erc20abi, contractAddress);
 			let nameCall = erc20Contract.methods.name().call;
 			contractCallObjects.push({address: contractAddress, nameCall: nameCall});
@@ -72,12 +76,12 @@ async function mapAddressesToNames(tokenAddresses, contractAddresses, web3, erc2
 		return;
 	}
 
-	let tokenPromises = [];
+	let tokenPromises : any[] = [];
 	for (const tokenCallObject of tokenCallObjects) {
 		pushPromise(tokenPromises, tokenCallObject.symbolCall, batch, tokenCallObject.address);
 		pushPromise(tokenPromises, tokenCallObject.decimalCall, batch, 18);
 	}
-	let contractPromises = [];
+	let contractPromises : any[] = [];
 	for (const contractCallObject of contractCallObjects) {
 		pushPromise(contractPromises, contractCallObject.nameCall, batch, contractCallObject.address);
 	}
@@ -89,17 +93,17 @@ async function mapAddressesToNames(tokenAddresses, contractAddresses, web3, erc2
 
 	let tokenIndex = 0;
 	for (let i = 0; i < tokenCallObjects.length; i++) {
-		tokenAddressToName[tokenCallObjects[i].address] = { symbol: tokenInformation[tokenIndex], decimals: tokenInformation[tokenIndex+1] };
+		tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal(tokenCallObjects[i].address, new SymbolDecimal(tokenInformation[tokenIndex], tokenInformation[tokenIndex+1]));
 		tokenIndex = tokenIndex + 2;
 	}
 	for (let i = 0; i < contractCallObjects.length; i++) {
-		contractAddressToName[contractCallObjects[i].address] = contractInformation[i];
+		contractAddressToNames.AddContractAddressToNamesMap(contractCallObjects[i].address, contractInformation[i]);
 	}
 }
 
-function pushPromise(promises, call, batch, backup = null) {
+function pushPromise(promises : any[], call : any, batch : BatchRequest, backup:any = undefined) : void {
 	promises.push(new Promise((res, rej) => {
-		let req = call.request({}, "latest", (err, data) => {
+		let req = call.request({}, "latest", (err:string, data:any) => {
 			if (err){
 				rej({err, backup});
 			}
@@ -111,14 +115,12 @@ function pushPromise(promises, call, batch, backup = null) {
 	}));
 }
 
-async function resolvePromises(promises){
+async function resolvePromises(promises:any[]) : Promise<any[]>{
 	return Promise.all(
 		promises.map((p) => {
-			return p.catch((e) => {
+			return p.catch((e:any) => {
 				return e.backup ? e.backup : 'unknown';
 			});
 		})
 	);
 }
-
-module.exports = translateCallsAndLogs;

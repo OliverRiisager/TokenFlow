@@ -1,17 +1,15 @@
-const BigNumber = require('bignumber.js');
-const utility = require("./utility.js");
-const knownAddresses = require('./knownAddresses');
-const transactionAndLogTypes = require('./transactionAndLogTypes');
+import BigNumber from 'bignumber.js';
 
-const ethAddress = knownAddresses.ethAddress;
-const wethAddress = knownAddresses.wethAddress;
+import { ethAddress, wethAddress } from './knownAddresses';
+import { Call, CallObject, Log, ProcessedCall } from './index';
+import { Methods } from './model/methods.model';
 
-const transfer = transactionAndLogTypes.transfer;
-const transferFrom = transactionAndLogTypes.transferFrom;
-const deposit = transactionAndLogTypes.deposit;
-const withdraw = transactionAndLogTypes.withdraw;
-const ethTransfer = transactionAndLogTypes.ethTransfer;
-const unknownTransfer = transactionAndLogTypes.unknown;
+const transfer = Methods.Transfer;
+const transferFrom = Methods.TransferFrom;
+const deposit = Methods.Deposit;
+const withdraw = Methods.Withdraw;
+const ethTransfer = Methods.EthTransfer;
+const unknownTransfer = Methods.Unknown;
 
 let validFunctionNames = [
 	transfer,
@@ -20,9 +18,13 @@ let validFunctionNames = [
 	withdraw
 ];
 
-function processCalls(callObject, abiDecoder) {
-   let processedCallsArray = [];
+export function processCalls(callObject : CallObject, abiDecoder : any) : ProcessedCall[] {
+   let processedCallsArray:ProcessedCall[] = [];
    doProcessCall(processedCallsArray, callObject, abiDecoder, true);
+   
+   if(lastCallObjectWithLogs.logs === undefined){
+    lastCallObjectWithLogs.logs = [];
+   }
    if(consumableLogs.length > 0){
        for (let i = 0; i < consumableLogs.length; i++) {
            const notAddedLog = consumableLogs[i];
@@ -30,20 +32,23 @@ function processCalls(callObject, abiDecoder) {
        }
        lastCallObjectWithLogs.logs.sort(sortLogs);
    }
-   return processedCallsArray
+   return processedCallsArray;
 }
 
-let lastCallObjectWithLogs = undefined;
-let consumableLogs = [];
-let consumableErrorMsg = undefined;
+let lastCallObjectWithLogs:ProcessedCall;
+let consumableLogs:Log[] = [];
+let consumableErrorMsg :any = undefined;
 
-function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = false){
+function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObject | Call, abiDecoder:any, firstCall = false) : void{
     let transactionValue = new BigNumber(callObject.value);
     let hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
     let decodedInput = callObject.input ? abiDecoder.decodeMethod(callObject.input) : undefined;
     let interestingInput = decodedInput !== undefined && validFunctionNames.indexOf(decodedInput['name']) !== -1;
     let hasLogs = callObject.logs != undefined;
     if(hasLogs){
+        if(callObject.logs === undefined){
+            callObject.logs = [];
+        }
         callObject.logs.forEach(element => {
             consumableLogs.push(element);
         });
@@ -61,7 +66,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
                     unknownTransfer,
                     callObject.to,
                     callObject.from,
-                    new BigNumber(0),
+                    new BigNumber(0).toString(),
                     unknownTransfer,
                     unknownTransfer,
                     hasLogs);
@@ -101,7 +106,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
                         ethAddress, 
                         callObject.to, 
                         callObject.from, 
-                        utility.getValue(callObject.value), 
+                        callObject.value,
                         decodedInput['name'], 
                         deposit,
                         hasLogs);
@@ -115,7 +120,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
                         wethAddress, 
                         callObject.to, 
                         callObject.from, 
-                        decodedInput.params[0].value, 
+                        decodedInput.params[0].value,
                         decodedInput['name'], 
                         withdraw,
                         hasLogs);
@@ -129,7 +134,7 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
             ethAddress,
             callObject.to,
             callObject.from,
-            utility.getValue(callObject.value),
+            callObject.value,
             ethTransfer,
             ethTransfer,
             hasLogs);
@@ -141,15 +146,15 @@ function doProcessCall(processedCallsArray, callObject, abiDecoder, firstCall = 
     }
 }
 
-function addCall(txs, token, to, from, rawValue, type, logCompareType, hasLogs){
+function addCall(txs : ProcessedCall[], token:string, to:string, from:string, rawValue:string, type:string, logCompareType:string, hasLogs:boolean) : void{
     consumableLogs.sort(sortLogs);
-    let newTxCall = {
+    let newTxCall:ProcessedCall = {
         token: token,
         to: to,
         from: from,
         rawValue: rawValue,
         type: type,
-        logCompareType: logCompareType,
+        logCompareType: logCompareType
     };
     if(hasLogs){
         newTxCall.logs = consumableLogs;
@@ -158,12 +163,12 @@ function addCall(txs, token, to, from, rawValue, type, logCompareType, hasLogs){
     }
     if(consumableErrorMsg != undefined){
         newTxCall.error = consumableErrorMsg;
-        consumableErrorMsg = undefined;
+        consumableErrorMsg = "";
     }
     txs.push(newTxCall);
 }
 
-function sortLogs( a, b ) {
+function sortLogs( a:Log, b:Log) : number {
     if ( a.logIndex < b.logIndex ){
         return -1;
     }
@@ -171,6 +176,4 @@ function sortLogs( a, b ) {
         return 1;
     }
     return 0;
-    }
-
-module.exports = processCalls;
+}

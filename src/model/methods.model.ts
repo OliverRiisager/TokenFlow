@@ -1,5 +1,5 @@
 
-enum Methods {
+export enum Methods {
     Transfer = 'transfer',
     TransferFrom = 'transferFrom',
     Deposit = 'deposit',
@@ -8,5 +8,3 @@ enum Methods {
     EthTransfer  = 'ethTransfer',
     Unknown = 'unknown'
 }
-
-export {Methods}

@@ -1,16 +1,16 @@
-const knownAddresses = require('./knownAddresses');
+import { wethAddress } from './knownAddresses';
 
-const wethAddress = knownAddresses.wethAddress;
+import { Methods } from './model/methods.model';
+import { ProcessedLog } from './model/processedLog.model';
+import { DecodedLog } from './model';
 
-const transactionAndLogTypes = require('./transactionAndLogTypes');
+const transfer = Methods.Transfer;
+const deposit = Methods.Deposit;
+const withdraw = Methods.Withdraw;
+const logWithdraw = Methods.LogWithdraw;
 
-const transfer = transactionAndLogTypes.transfer;
-const deposit = transactionAndLogTypes.deposit;
-const withdraw = transactionAndLogTypes.withdraw;
-const logWithdraw = transactionAndLogTypes.logWithdraw;
-
-export function processLogs(logs){
-	let processedLogs = [];
+export function processLogs(logs : DecodedLog[]) : ProcessedLog[]{
+	let processedLogs:ProcessedLog[] = [];
 	for (let i = 0; i < logs.length; i++) {
 		let log = logs[i];
 		if(log == undefined){
@@ -19,7 +19,6 @@ export function processLogs(logs){
 		let type = log.name.toLowerCase();
 		if(type === transfer){
 			let transferEvent = log.events;
-
             addLog(
                 processedLogs,
 				log.address.toLowerCase(),
@@ -60,7 +59,7 @@ export function processLogs(logs){
     return processedLogs;
 }
 
-function addLog(processedLogs, token, to, from, rawValue, type, logIndex){
+function addLog(processedLogs:ProcessedLog[], token:string, to:string, from:string, rawValue:string, type:string, logIndex:number):void{
     processedLogs.push({
         token: token,
         to: to,

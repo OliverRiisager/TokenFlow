@@ -8,7 +8,6 @@
 // match the expected interface, even if the JSON is valid.
 
 import { Transfer } from './model/transferObject.model';
-import { Log } from './model/logIndex.model';
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -145,7 +144,7 @@ function u(...typs: any[]) {
 function o(props: any[], additional: any) {
     return { props, additional };
 }
-
+// @ts-ignore
 function m(additional: any) {
     return { props: [], additional };
 }

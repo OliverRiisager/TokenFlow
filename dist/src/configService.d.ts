@@ -1,11 +1,10 @@
-import { config } from '../config';
-declare class configService {
-    config: config;
-    static instance: configService;
+import { Config } from './model';
+export declare class ConfigService {
+    config: Config;
+    static instance: ConfigService;
     constructor();
-    static getInstance(): configService;
-    setConfig(configObj: config): void;
-    setConfigFromAddress(providerAddress: any): void;
+    static getInstance(): ConfigService;
+    setConfig(configObj: Config): void;
+    setConfigFromUrl(providerAddress: string): void;
 }
-export { configService };
 //# sourceMappingURL=configService.d.ts.map

@@ -1,20 +1,21 @@
-export = traceProcessor;
-declare class traceProcessor {
-    web3: any;
-    txs: any[];
-    extendWeb3(_web3Instance: any): any;
-    getTransfers(txHash: any): Promise<{
-        transfers: any;
+import Web3 from "web3";
+import { Transfer } from './model';
+export declare class traceProcessor {
+    web3: Web3;
+    constructor();
+    extendWeb3(_web3Instance: Web3): Web3;
+    getTransfers(txHash: string): Promise<{
+        transfers: Transfer[];
         nodes: {
-            address: any;
-            name: any;
+            address: string;
+            name: string;
         }[];
     }>;
-    doGetTransfers(txHash: any): Promise<{
-        transfers: any;
+    doGetTransfers(txHash: string): Promise<{
+        transfers: Transfer[];
         nodes: {
-            address: any;
-            name: any;
+            address: string | null | undefined;
+            name: string | null | undefined;
         }[];
     }>;
 }

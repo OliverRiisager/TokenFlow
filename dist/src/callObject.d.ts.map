@@ -1,0 +1,1 @@
+{"version":3,"file":"callObject.d.ts","sourceRoot":"","sources":["../../src/callObject.ts"],"names":[],"mappings":"AASA,OAAO,EAAE,UAAU,EAAE,MAAM,0BAA0B,CAAC;AAItD,qBAAa,iBAAiB;WACZ,YAAY,CAAC,IAAI,EAAE,MAAM,GAAG,UAAU;WAItC,gBAAgB,CAAC,KAAK,EAAE,UAAU,GAAG,MAAM;CAG5D"}

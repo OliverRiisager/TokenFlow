@@ -1,9 +1,10 @@
-export = translateCallsAndLogs;
-declare function translateCallsAndLogs(combinedLogsAndTxs: any, web3: any, senderAddress: any, erc20abi: any): Promise<{
-    transfers: any;
+import { Transfer } from './model';
+import Web3 from 'web3';
+export declare function translateCallsAndLogs(combinedLogsAndTxs: Transfer[], web3: Web3, senderAddress: string, erc20abi: any): Promise<{
+    transfers: Transfer[];
     nodes: {
-        address: any;
-        name: any;
+        address: string | null | undefined;
+        name: string | null | undefined;
     }[];
 }>;
 //# sourceMappingURL=callLogTranslator.d.ts.map

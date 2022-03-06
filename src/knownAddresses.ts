@@ -1,4 +1,4 @@
-class SymbolDecimal {
+export class SymbolDecimal {
 
 	symbol : string;
 	decimals : number;
@@ -9,7 +9,7 @@ class SymbolDecimal {
 	}
 }
 
-class TokenAddressToSymbolDecimal {
+export class TokenAddressToSymbolDecimal {
 	tokenAddressToSymbolDecimal: Map<string, SymbolDecimal>;
 
 	constructor(){
@@ -23,15 +23,20 @@ class TokenAddressToSymbolDecimal {
 		this.tokenAddressToSymbolDecimal.set(address, symbolDecimal);
 		return true;
 	}
+
+	GetTokenSymbolDecimal(address:string) : SymbolDecimal | null | undefined{
+		if(!this.tokenAddressToSymbolDecimal.has(address)){
+			return null;
+		}
+		return this.tokenAddressToSymbolDecimal.get(address);
+	}
+
+	HasTokenAddress(address:string):boolean{
+		return this.tokenAddressToSymbolDecimal.has(address);
+	}
 }
 
-const tokenAddressToSymbolDecimals : TokenAddressToSymbolDecimal = new TokenAddressToSymbolDecimal();
-tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("unknown", null);
-tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", new SymbolDecimal('WETH', 18));
-tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new SymbolDecimal('WETH', 18));
-tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2", new SymbolDecimal('WETH', 18));
-
-class ContractAddressToNames {
+export class ContractAddressToNames {
 	contractAddressToNamesMap: Map<string, string>;
 
 	constructor(){
@@ -45,9 +50,26 @@ class ContractAddressToNames {
 		this.contractAddressToNamesMap.set(address, name);
 		return true;
 	}
+
+	GetContractName(address:string) : string | undefined | null {
+		if(!this.contractAddressToNamesMap.has(address)){
+			return null;
+		}
+		return this.contractAddressToNamesMap.get(address);
+	}
+
+	HasContractAddress(address:string):boolean{
+		return this.contractAddressToNamesMap.has(address);
+	}
 }
 
-const contractAddressToNames : ContractAddressToNames = new ContractAddressToNames();
+export const tokenAddressToSymbolDecimals : TokenAddressToSymbolDecimal = new TokenAddressToSymbolDecimal();
+tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("unknown", new SymbolDecimal('unknown', 18));
+tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2", new SymbolDecimal('WETH', 18));
+tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new SymbolDecimal('ETH', 18));
+tokenAddressToSymbolDecimals.AddTokenAddressSymbolDecimal("0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2", new SymbolDecimal('MKR', 18));
+
+export const contractAddressToNames : ContractAddressToNames = new ContractAddressToNames();
 
 contractAddressToNames.AddContractAddressToNamesMap("unknown", "unknown");
 contractAddressToNames.AddContractAddressToNamesMap("0x0000000000000000000000000000000000000000", "Address zero");
@@ -75,12 +97,5 @@ contractAddressToNames.AddContractAddressToNamesMap("0xa1d7b2d891e3a1f9ef4bbc5be
 contractAddressToNames.AddContractAddressToNamesMap("0x088ee5007c98a9677165d78dd2109ae4a3d04d0c", "SushiSwap: YFI");
 
 
-const ethAddress:string = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-const wethAddress:string = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-
-export {
-	tokenAddressToSymbolDecimals,
-	contractAddressToNames,
-	ethAddress,
-	wethAddress
-}
+export const ethAddress:string = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+export const wethAddress:string = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";

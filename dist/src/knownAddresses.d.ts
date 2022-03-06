@@ -1,21 +1,24 @@
-declare class SymbolDecimal {
+export declare class SymbolDecimal {
     symbol: string;
     decimals: number;
     constructor(symbol: string, decimals: number);
 }
-declare class TokenAddressToSymbolDecimal {
+export declare class TokenAddressToSymbolDecimal {
     tokenAddressToSymbolDecimal: Map<string, SymbolDecimal>;
     constructor();
     AddTokenAddressSymbolDecimal(address: string, symbolDecimal: SymbolDecimal): boolean;
+    GetTokenSymbolDecimal(address: string): SymbolDecimal | null | undefined;
+    HasTokenAddress(address: string): boolean;
 }
-declare const tokenAddressToSymbolDecimals: TokenAddressToSymbolDecimal;
-declare class ContractAddressToNames {
+export declare class ContractAddressToNames {
     contractAddressToNamesMap: Map<string, string>;
     constructor();
     AddContractAddressToNamesMap(address: string, name: string): boolean;
+    GetContractName(address: string): string | undefined | null;
+    HasContractAddress(address: string): boolean;
 }
-declare const contractAddressToNames: ContractAddressToNames;
-declare const ethAddress: string;
-declare const wethAddress: string;
-export { tokenAddressToSymbolDecimals, contractAddressToNames, ethAddress, wethAddress };
+export declare const tokenAddressToSymbolDecimals: TokenAddressToSymbolDecimal;
+export declare const contractAddressToNames: ContractAddressToNames;
+export declare const ethAddress: string;
+export declare const wethAddress: string;
 //# sourceMappingURL=knownAddresses.d.ts.map

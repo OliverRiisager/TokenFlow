@@ -1,15 +1,15 @@
 import Express from "express";
 import { createSession } from "better-sse";
 
-import {config} from './config';
-import {configService} from './src/configService';
+import {httpGethProvider} from './config';
+import {ConfigService} from './src/configService';
 import {traceProcessor} from "./src/traceProcessor";
 
 import cors from "cors";
 const app = Express();
 const { PORT = 3000 } = process.env;
 
-configService.getInstance().setConfig(new config());
+ConfigService.getInstance().setConfigFromUrl(httpGethProvider);
 const traceProcessorInstance = new traceProcessor();
 let cachedTxHash = undefined;
 

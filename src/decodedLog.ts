@@ -144,7 +144,7 @@ function u(...typs: any[]) {
 function o(props: any[], additional: any) {
     return { props, additional };
 }
-
+// @ts-ignore
 function m(additional: any) {
     return { props: [], additional };
 }

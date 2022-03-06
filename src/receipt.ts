@@ -135,7 +135,7 @@ function uncast<T>(val: T, typ: any): any {
 function a(typ: any) {
     return { arrayItems: typ };
 }
-
+// @ts-ignore
 function u(...typs: any[]) {
     return { unionMembers: typs };
 }
@@ -143,7 +143,7 @@ function u(...typs: any[]) {
 function o(props: any[], additional: any) {
     return { props, additional };
 }
-
+// @ts-ignore
 function m(additional: any) {
     return { props: [], additional };
 }

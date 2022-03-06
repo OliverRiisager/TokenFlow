@@ -6,3 +6,4 @@ export * from './logIndex.model';
 export * from './methods.model';
 export * from './receipt.model';
 export * from './transferObject.model';
+export * from './config.model';

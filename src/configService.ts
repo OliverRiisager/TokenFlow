@@ -1,9 +1,9 @@
 
-import {Config} from '../config';
+import {Config} from './model';
 
 export class ConfigService {
 
-    config: Config | undefined;
+    config: Config;
     static instance : ConfigService;
 
     constructor() { }
@@ -24,7 +24,7 @@ export class ConfigService {
         this.config = configObj;
     }
 
-    setConfigFromAddress(providerAddress : string) : void{
+    setConfigFromUrl(providerAddress : string) : void{
 
         if(typeof(providerAddress) !== typeof("")){
             throw new Error("providerAddress is not of correct type");

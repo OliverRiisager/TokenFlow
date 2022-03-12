@@ -8,68 +8,63 @@ const transfer = Methods.Transfer;
 const deposit = Methods.Deposit;
 const withdraw = Methods.Withdraw;
 const logWithdraw = Methods.LogWithdraw;
+const processedLogs: ProcessedLog[] = [];
+let logIndex: number;
 
+/* eslint-disable max-lines-per-function */
 export function processLogs(logs: (DecodedLog | null)[]): ProcessedLog[] {
-    let processedLogs: ProcessedLog[] = [];
     for (let i = 0; i < logs.length; i++) {
-        let log = logs[i];
+        logIndex = i;
+        const log = logs[i];
         if (log == undefined) {
             continue;
         }
-        let type = log.name.toLowerCase();
+        const type = log.name.toLowerCase();
         if (type === transfer) {
-            let transferEvent = log.events;
+            const transferEvent = log.events;
             addLog(
-                processedLogs,
                 log.address.toLowerCase(),
                 transferEvent[1].value.toLowerCase(),
                 transferEvent[0].value.toLowerCase(),
                 transferEvent[2].value,
-                type,
-                i
+                type
             );
             continue;
         }
         if (type === deposit) {
-            let depositEvent = log.events;
+            const depositEvent = log.events;
             addLog(
-                processedLogs,
                 wethAddress,
                 depositEvent[0].value.toLowerCase(),
                 log.address.toLowerCase(),
                 depositEvent[1].value,
-                type,
-                i
+                type
             );
-
             continue;
         }
 
         if (type === logWithdraw) {
-            let withdrawEvent = log.events;
+            const withdrawEvent = log.events;
             addLog(
-                processedLogs,
                 wethAddress,
                 log.address.toLowerCase(),
                 withdrawEvent[0].value.toLowerCase(),
                 withdrawEvent[1].value,
-                withdraw,
-                i
+                withdraw
             );
             continue;
         }
     }
     return processedLogs;
 }
+/* eslint-enable max-lines-per-function */
 
 function addLog(
-    processedLogs: ProcessedLog[],
     token: string,
     to: string,
     from: string,
     rawValue: string,
-    type: string,
-    logIndex: number
+    type: string
 ): void {
     processedLogs.push({
         token: token,

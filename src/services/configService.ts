@@ -1,10 +1,9 @@
-import {Config} from './model';
+import {Config} from '../model';
 
 export class ConfigService {
-    config: Config = new Config();
     static instance: ConfigService;
 
-    constructor() {}
+    config: Config = new Config();
 
     static getInstance(): ConfigService {
         if (!ConfigService.instance) {

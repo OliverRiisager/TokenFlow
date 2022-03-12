@@ -6,7 +6,7 @@ This doc uses a modified version of the tracer code from https://github.com/ethe
 - i also compare based on numbers rather than strings in most cases.
 */
 
-let logInsertion =
+const logInsertion =
     //LOG0 - 4
     '   var logElement = {};' +
     '   if (opcode == 0xA0 || opcode == 0xA1 || opcode == 0xA2 || opcode == 0xA3 || opcode == 0xA4) {' +
@@ -27,7 +27,7 @@ let logInsertion =
     '     return;' +
     '   }';
 
-let step =
+const step =
     // step is invoked for every opcode that the VM executes.
     '	step: function(log, db) {' +
     // Capture any errors immediately
@@ -134,7 +134,7 @@ let step =
     '		}' +
     '	},';
 
-let fault =
+const fault =
     // fault is invoked when the actual execution of an opcode fails.
     '	fault: function(log, db) {' +
     // If the topmost call already reverted, don't handle the additional fault again
@@ -166,7 +166,7 @@ let fault =
     '		this.callstack.push(call);' +
     '	},';
 
-let result =
+const result =
     // result is invoked when all the opcodes have been iterated over and returns
     // the final result of the tracing.
     '	result: function(ctx, db) {' +
@@ -193,7 +193,7 @@ let result =
     '		}' +
     '		return this.finalize(result);' +
     '	},';
-let finalize =
+const finalize =
     // finalize recreates a call object using the final desired field oder for json
     // serialization. This is a nicety feature to pass meaningfully ordered results
     // to users who don't interpret it, just display it.
@@ -224,7 +224,7 @@ let finalize =
     '		return sorted;' +
     '	},';
 
-let fullTracer =
+const fullTracer =
     '{' +
     // callstack is the current recursive call stack of the EVM execution.
     '	callstack: [{}],' +

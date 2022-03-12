@@ -1,23 +1,23 @@
 // To parse this data:
 //
-//   import { Convert } from "./file";
+//   import { Convert, CallObject } from "./file";
 //
-//   const transfer = Convert.toTransfer(json);
+//   const callObject = Convert.toCallObject(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import {Transfer} from './model/transferObject.model';
+import {CallObject} from '../model/callObject.model';
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
-export class ConvertToTransfer {
-    public static toTransfer(json: string): Transfer[] {
-        return cast(JSON.parse(json), a(r('Transfer')));
+export class ConvertCallObject {
+    public static toCallObject(json: string): CallObject {
+        return cast(JSON.parse(json), r('CallObject'));
     }
 
-    public static transferToJson(value: Transfer[]): string {
-        return JSON.stringify(uncast(value, a(r('Transfer'))), null, 2);
+    public static callObjectToJson(value: CallObject): string {
+        return JSON.stringify(uncast(value, r('CallObject')), null, 2);
     }
 }
 
@@ -169,23 +169,36 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    Transfer: o(
+    CallObject: o(
         [
-            {json: 'token', js: 'token', typ: ''},
-            {json: 'to', js: 'to', typ: ''},
-            {json: 'from', js: 'from', typ: ''},
-            {json: 'rawValue', js: 'rawValue', typ: ''},
             {json: 'type', js: 'type', typ: ''},
-            {
-                json: 'logCompareType',
-                js: 'logCompareType',
-                typ: u(undefined, ''),
-            },
-            {json: 'value', js: 'value', typ: u(undefined, 0)},
+            {json: 'from', js: 'from', typ: ''},
+            {json: 'to', js: 'to', typ: ''},
+            {json: 'value', js: 'value', typ: ''},
+            {json: 'gas', js: 'gas', typ: ''},
+            {json: 'gasUsed', js: 'gasUsed', typ: ''},
+            {json: 'input', js: 'input', typ: ''},
+            {json: 'output', js: 'output', typ: ''},
             {json: 'logs', js: 'logs', typ: u(undefined, a(r('Log')))},
-            {json: 'tokenName', js: 'tokenName', typ: u(undefined, '')},
-            {json: 'isLog', js: 'isLog', typ: u(undefined, true)},
-            {json: 'logIndex', js: 'logIndex', typ: u(undefined, 0)},
+            {json: 'time', js: 'time', typ: ''},
+            {json: 'calls', js: 'calls', typ: u(undefined, a(r('Call')))},
+            {json: 'error', js: 'error', typ: u(undefined, '')},
+        ],
+        false
+    ),
+    Call: o(
+        [
+            {json: 'type', js: 'type', typ: ''},
+            {json: 'from', js: 'from', typ: ''},
+            {json: 'to', js: 'to', typ: ''},
+            {json: 'value', js: 'value', typ: ''},
+            {json: 'gas', js: 'gas', typ: u(undefined, '')},
+            {json: 'gasUsed', js: 'gasUsed', typ: u(undefined, '')},
+            {json: 'input', js: 'input', typ: ''},
+            {json: 'output', js: 'output', typ: ''},
+            {json: 'logs', js: 'logs', typ: u(undefined, a(r('Log')))},
+            {json: 'calls', js: 'calls', typ: u(undefined, a(r('Call')))},
+            {json: 'error', js: 'error', typ: u(undefined, '')},
         ],
         false
     ),

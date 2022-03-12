@@ -1,22 +1,23 @@
 // To parse this data:
 //
-//   import { Convert, Receipt } from "./file";
+//   import { Convert } from "./file";
 //
-//   const receipt = Convert.toReceipt(json);
+//   const transfer = Convert.toTransfer(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-import {Receipt} from './model/receipt.model';
+import {Transfer} from '../model/transferObject.model';
+
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
-export class ConvertReceipt {
-    public static toReceipt(json: string): Receipt {
-        return cast(JSON.parse(json), r('Receipt'));
+export class ConvertToTransfer {
+    public static toTransfer(json: string): Transfer[] {
+        return cast(JSON.parse(json), a(r('Transfer')));
     }
 
-    public static receiptToJson(value: Receipt): string {
-        return JSON.stringify(uncast(value, r('Receipt')), null, 2);
+    public static transferToJson(value: Transfer[]): string {
+        return JSON.stringify(uncast(value, a(r('Transfer'))), null, 2);
     }
 }
 
@@ -150,7 +151,7 @@ function uncast<T>(val: T, typ: any): any {
 function a(typ: any) {
     return {arrayItems: typ};
 }
-// @ts-ignore
+
 function u(...typs: any[]) {
     return {unionMembers: typs};
 }
@@ -168,38 +169,25 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    Receipt: o(
+    Transfer: o(
         [
-            {json: 'blockHash', js: 'blockHash', typ: ''},
-            {json: 'blockNumber', js: 'blockNumber', typ: 0},
-            {json: 'contractAddress', js: 'contractAddress', typ: null},
-            {json: 'cumulativeGasUsed', js: 'cumulativeGasUsed', typ: 0},
-            {json: 'effectiveGasPrice', js: 'effectiveGasPrice', typ: 0},
-            {json: 'from', js: 'from', typ: ''},
-            {json: 'gasUsed', js: 'gasUsed', typ: 0},
-            {json: 'logs', js: 'logs', typ: a(r('Log'))},
-            {json: 'logsBloom', js: 'logsBloom', typ: ''},
-            {json: 'status', js: 'status', typ: true},
+            {json: 'token', js: 'token', typ: ''},
             {json: 'to', js: 'to', typ: ''},
-            {json: 'transactionHash', js: 'transactionHash', typ: ''},
-            {json: 'transactionIndex', js: 'transactionIndex', typ: 0},
+            {json: 'from', js: 'from', typ: ''},
+            {json: 'rawValue', js: 'rawValue', typ: ''},
             {json: 'type', js: 'type', typ: ''},
+            {
+                json: 'logCompareType',
+                js: 'logCompareType',
+                typ: u(undefined, ''),
+            },
+            {json: 'value', js: 'value', typ: u(undefined, 0)},
+            {json: 'logs', js: 'logs', typ: u(undefined, a(r('Log')))},
+            {json: 'tokenName', js: 'tokenName', typ: u(undefined, '')},
+            {json: 'isLog', js: 'isLog', typ: u(undefined, true)},
+            {json: 'logIndex', js: 'logIndex', typ: u(undefined, 0)},
         ],
         false
     ),
-    Log: o(
-        [
-            {json: 'address', js: 'address', typ: ''},
-            {json: 'topics', js: 'topics', typ: a('')},
-            {json: 'data', js: 'data', typ: ''},
-            {json: 'blockNumber', js: 'blockNumber', typ: 0},
-            {json: 'transactionHash', js: 'transactionHash', typ: ''},
-            {json: 'transactionIndex', js: 'transactionIndex', typ: 0},
-            {json: 'blockHash', js: 'blockHash', typ: ''},
-            {json: 'logIndex', js: 'logIndex', typ: 0},
-            {json: 'removed', js: 'removed', typ: true},
-            {json: 'id', js: 'id', typ: ''},
-        ],
-        false
-    ),
+    Log: o([{json: 'logIndex', js: 'logIndex', typ: 0}], false),
 };

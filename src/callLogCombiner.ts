@@ -1,44 +1,53 @@
-import {ProcessedCall} from './model';
-import {ProcessedLog} from './model';
-import {Transfer} from './model';
+import {ProcessedCall, ProcessedLog, Transfer} from './model';
 
 export function insertLogs(
     processedLogs: ProcessedLog[],
     processedCalls: ProcessedCall[]
 ): Transfer[] {
     const combinedTxsAndLogs: Transfer[] = [];
-    let noMatchLogs = findLogsWithNoMatch(processedLogs, processedCalls);
+    const noMatchLogs = findLogsWithNoMatch(processedLogs, processedCalls);
     for (let index = 0; index < processedCalls.length; index++) {
         const element = processedCalls[index];
         combinedTxsAndLogs.push(element);
-        if (element.logs === undefined || element.logs.length < 1) {
+        if (!tryAddLogs(element, noMatchLogs, combinedTxsAndLogs)) {
             continue;
-        } else {
-            for (let j = 0; j < element.logs.length; j++) {
-                const logIndex = element.logs[j].logIndex;
-                let foundElement = noMatchLogs.find(
-                    (x) => x.logIndex === logIndex
-                );
-                if (foundElement != undefined) {
-                    combinedTxsAndLogs.push(foundElement);
-                }
-            }
         }
     }
     return combinedTxsAndLogs;
+}
+
+function tryAddLogs(
+    processedCall: ProcessedCall,
+    noMatchLogs: ProcessedLog[],
+    combinedTxsAndLogs: Transfer[]
+): boolean {
+    if (processedCall.logs === undefined || processedCall.logs.length < 1) {
+        return false;
+    } else {
+        for (let j = 0; j < processedCall.logs.length; j++) {
+            const logIndex = processedCall.logs[j].logIndex;
+            const foundElement = noMatchLogs.find(
+                (x) => x.logIndex === logIndex
+            );
+            if (foundElement != undefined) {
+                combinedTxsAndLogs.push(foundElement);
+            }
+        }
+        return true;
+    }
 }
 
 function findLogsWithNoMatch(
     logs: ProcessedLog[],
     txs: ProcessedCall[]
 ): ProcessedLog[] {
-    let noMatchLogs: ProcessedLog[] = [];
+    const noMatchLogs: ProcessedLog[] = [];
     let lastMatchIndex = 0;
     for (let i = 0; i < logs.length; i++) {
         let logMatchedAnyTx = false;
-        let log = logs[i];
+        const log = logs[i];
         for (let j = lastMatchIndex; j < txs.length; j++) {
-            let txElement = txs[j];
+            const txElement = txs[j];
             if (doesLogEqualTx(txElement, log)) {
                 lastMatchIndex = j + 1;
                 logMatchedAnyTx = true;

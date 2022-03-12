@@ -3,30 +3,36 @@ import {processCalls} from './callProcessor';
 import {processLogs} from './logProcessor';
 import {insertLogs} from './callLogCombiner';
 import {translateCallsAndLogs} from './callLogTranslator';
-// @ts-ignore
-import abiDecoder from 'abi-decoder';
 import Web3 from 'web3';
-import {ConfigService} from './configService';
+import {ConfigService, AbiDecoderService, AbiService} from './services';
+import {
+    CallObject,
+    DecodedLog,
+    Receipt,
+    ProcessedCall,
+    TransfersNodes,
+} from './model';
+import {DecodedLogConvert} from './JsonConverters';
 
-import erc20abi from '../public/abis/erc20.json';
-import wethAbi from '../public/abis/wrappedEther.json';
-import {CallObject, Transfer, DecodedLog} from './model';
-import {DecodedLogConvert} from './decodedLog';
-
-export class traceProcessor {
+export class TraceProcessor {
     web3: Web3;
 
-    constructor() {
-        abiDecoder.addABI(erc20abi);
-        abiDecoder.addABI(wethAbi);
+    abiDecoderWrapper: AbiDecoderService = AbiDecoderService.getInstance();
 
-        let config = ConfigService.getInstance().config;
+    abiService: AbiService = AbiService.getInstance();
+
+    constructor() {
+        const abiDecoder = this.abiDecoderWrapper.abiDecoder;
+        abiDecoder.addABI(this.abiService.erc20abi);
+        abiDecoder.addABI(this.abiService.weth20abi);
+
+        const config = ConfigService.getInstance().config;
 
         if (config === undefined) {
             throw 'config not defined - please create config through configservice.';
         }
 
-        let web3Instance = new Web3(
+        const web3Instance = new Web3(
             new Web3.providers.HttpProvider(config.httpGethProvider)
         );
         this.web3 = this.extendWeb3(web3Instance);
@@ -50,48 +56,64 @@ export class traceProcessor {
         return this.doGetTransfers(txHash);
     }
 
-    async doGetTransfers(
-        txHash: string
-    ): Promise<{
-        transfers: Transfer[];
-        nodes: {
-            address: string | null | undefined;
-            name: string | null | undefined;
-        }[];
-    }> {
-        let rawTransferData: GethTrace = await getTrace(txHash, this.web3);
+    async doGetTransfers(txHash: string): Promise<TransfersNodes> {
+        const rawTransferData = await this.getRawTransferData(txHash);
+        const processedCalls = this.getProcessedCalls(rawTransferData);
+        const receipt = this.getReceipt(rawTransferData);
+        const combinedTxsAndLogs = this.getCombinedTxsAndLogs(
+            receipt,
+            processedCalls
+        );
+
+        const nodesAndTxs = await translateCallsAndLogs(
+            combinedTxsAndLogs,
+            this.web3,
+            receipt.from
+        );
+        return nodesAndTxs;
+    }
+
+    async getRawTransferData(txHash: string): Promise<GethTrace> {
+        const rawTransferData: GethTrace = await getTrace(txHash, this.web3);
         if (rawTransferData.error !== undefined) {
             throw rawTransferData.error;
         }
-        let callObject: CallObject | null = rawTransferData.callObject;
+        return rawTransferData;
+    }
+
+    getProcessedCalls(rawTransferData: GethTrace): ProcessedCall[] {
+        const callObject: CallObject | null = rawTransferData.callObject;
         if (callObject === null) {
             throw 'Callobject is null - please double check your config';
         }
-        let processedCalls = processCalls(callObject, abiDecoder);
+        return processCalls(callObject);
+    }
 
-        let receipt = rawTransferData.receipt;
+    getReceipt(rawTransferData: GethTrace) {
+        const receipt = rawTransferData.receipt;
         if (receipt === null) {
             throw 'Receipt is null - please double check your config';
         }
+        return receipt;
+    }
 
+    getCombinedTxsAndLogs(receipt: Receipt, processedCalls: ProcessedCall[]) {
+        const decodedLogs = this.getDecodeLogs(receipt);
+        const processedLogs = processLogs(decodedLogs);
+        return insertLogs(processedLogs, processedCalls);
+    }
+
+    getDecodeLogs(receipt: Receipt) {
+        const abiDecoder = this.abiDecoderWrapper.abiDecoder;
         abiDecoder.keepNonDecodedLogs();
-        var decodedLogJsonString = JSON.stringify(
+        const decodedLogJsonString = JSON.stringify(
             abiDecoder.decodeLogs(receipt.logs)
         );
-        let decodedLogs: (DecodedLog | null)[] =
+        const decodedLogs: (DecodedLog | null)[] =
             DecodedLogConvert.toDecodedLog(decodedLogJsonString);
         if (decodedLogs === null) {
             throw 'JSON converting logs failed';
         }
-        let processedLogs = processLogs(decodedLogs);
-        var combinedTxsAndLogs = insertLogs(processedLogs, processedCalls);
-
-        let nodesAndTxs = await translateCallsAndLogs(
-            combinedTxsAndLogs,
-            this.web3,
-            receipt.from,
-            erc20abi
-        );
-        return nodesAndTxs;
+        return decodedLogs;
     }
 }

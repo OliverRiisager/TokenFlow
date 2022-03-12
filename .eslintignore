@@ -6,6 +6,5 @@ jest.config.ts
 test
 jsonConverters
 public
-server.ts
 gethCustomTracer.ts
 services

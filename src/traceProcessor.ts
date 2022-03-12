@@ -12,7 +12,7 @@ import {
     ProcessedCall,
     TransfersNodes,
 } from './model';
-import {DecodedLogConvert} from './JsonConverters';
+import {DecodedLogConvert} from './jsonConverters';
 
 export class TraceProcessor {
     web3: Web3;

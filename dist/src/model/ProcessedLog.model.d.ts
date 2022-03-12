@@ -7,4 +7,3 @@ export interface ProcessedLog {
     isLog: boolean;
     logIndex: number;
 }
-//# sourceMappingURL=ProcessedLog.model.d.ts.map

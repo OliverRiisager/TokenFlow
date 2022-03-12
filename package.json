@@ -40,9 +40,5 @@
         "standard-version": "^9.2.0",
         "typescript": "^4.6.2"
     },
-    "scripts": {
-        "development": "nodemon server.ts -e js,ejs --trace-warnings",
-        "start": "node server.ts"
-    },
     "homepage": "https://github.com/SpaghettiTheYeti/TokenFlow#readme"
 }

@@ -1,4 +1,4 @@
-import {Log} from './logIndex.model';
+import { Log } from './logIndex.model';
 export interface Transfer {
     token: string;
     to: string;
@@ -12,4 +12,3 @@ export interface Transfer {
     isLog?: boolean;
     logIndex?: number;
 }
-//# sourceMappingURL=transferObject.model.d.ts.map

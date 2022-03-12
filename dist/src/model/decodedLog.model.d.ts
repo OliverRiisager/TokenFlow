@@ -8,4 +8,3 @@ export interface Event {
     type: string;
     value: string;
 }
-//# sourceMappingURL=decodedLog.model.d.ts.map

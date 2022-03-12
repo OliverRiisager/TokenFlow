@@ -6,5 +6,5 @@ export * from './logIndex.model';
 export * from './methods.model';
 export * from './receipt.model';
 export * from './transferObject.model';
+export * from './transfersNodes.model';
 export * from './config.model';
-//# sourceMappingURL=index.d.ts.map

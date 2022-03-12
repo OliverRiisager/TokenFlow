@@ -26,4 +26,3 @@ export interface ReceiptLog {
     removed: boolean;
     id: string;
 }
-//# sourceMappingURL=receipt.model.d.ts.map

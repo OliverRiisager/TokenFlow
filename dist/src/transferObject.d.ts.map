@@ -1,1 +1,0 @@
-{"version":3,"file":"transferObject.d.ts","sourceRoot":"","sources":["../../src/transferObject.ts"],"names":[],"mappings":"AASA,OAAO,EAAE,QAAQ,EAAE,MAAM,8BAA8B,CAAC;AAIxD,qBAAa,iBAAiB;WACZ,UAAU,CAAC,IAAI,EAAE,MAAM,GAAG,QAAQ,EAAE;WAIpC,cAAc,CAAC,KAAK,EAAE,QAAQ,EAAE,GAAG,MAAM;CAG1D"}

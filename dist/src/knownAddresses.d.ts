@@ -6,22 +6,18 @@ export declare class SymbolDecimal {
 export declare class TokenAddressToSymbolDecimal {
     tokenAddressToSymbolDecimal: Map<string, SymbolDecimal>;
     constructor();
-    AddTokenAddressSymbolDecimal(
-        address: string,
-        symbolDecimal: SymbolDecimal
-    ): boolean;
-    GetTokenSymbolDecimal(address: string): SymbolDecimal | null | undefined;
-    HasTokenAddress(address: string): boolean;
+    addTokenAddressSymbolDecimal(address: string, symbolDecimal: SymbolDecimal): boolean;
+    getTokenSymbolDecimal(address: string): SymbolDecimal | undefined;
+    hasTokenAddress(address: string): boolean;
 }
 export declare class ContractAddressToNames {
     contractAddressToNamesMap: Map<string, string>;
     constructor();
-    AddContractAddressToNamesMap(address: string, name: string): boolean;
-    GetContractName(address: string): string | undefined | null;
-    HasContractAddress(address: string): boolean;
+    addContractAddressToNamesMap(address: string, name: string): boolean;
+    getContractName(address: string): string | undefined;
+    hasContractAddress(address: string): boolean;
 }
 export declare const tokenAddressToSymbolDecimals: TokenAddressToSymbolDecimal;
 export declare const contractAddressToNames: ContractAddressToNames;
-export declare const ethAddress: string;
-export declare const wethAddress: string;
-//# sourceMappingURL=knownAddresses.d.ts.map
+export declare const ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+export declare const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";

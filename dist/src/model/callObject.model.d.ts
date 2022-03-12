@@ -1,4 +1,4 @@
-import {Log} from './logIndex.model';
+import { Log } from './logIndex.model';
 export interface CallObject {
     type: string;
     from: string;
@@ -26,4 +26,3 @@ export interface Call {
     calls?: Call[];
     error?: string;
 }
-//# sourceMappingURL=callObject.model.d.ts.map

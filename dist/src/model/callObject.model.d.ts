@@ -1,4 +1,4 @@
-import { Log } from './logIndex.model';
+import {Log} from './logIndex.model';
 export interface CallObject {
     type: string;
     from: string;

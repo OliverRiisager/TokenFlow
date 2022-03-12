@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 
-import { ethAddress, wethAddress } from './knownAddresses';
-import { Call, CallObject, Log, ProcessedCall } from './index';
-import { Methods } from './model/methods.model';
+import {ethAddress, wethAddress} from './knownAddresses';
+import {Call, CallObject, Log, ProcessedCall} from './index';
+import {Methods} from './model/methods.model';
 
 const transfer = Methods.Transfer;
 const transferFrom = Methods.TransferFrom;
@@ -11,56 +11,63 @@ const withdraw = Methods.Withdraw;
 const ethTransfer = Methods.EthTransfer;
 const unknownTransfer = Methods.Unknown;
 
-let validFunctionNames = [
-	transfer,
-	transferFrom,
-	deposit,
-	withdraw
-];
+let validFunctionNames = [transfer, transferFrom, deposit, withdraw];
 
-export function processCalls(callObject : CallObject, abiDecoder : any) : ProcessedCall[] {
-   let processedCallsArray:ProcessedCall[] = [];
-   doProcessCall(processedCallsArray, callObject, abiDecoder, true);
-   
-   if(lastCallObjectWithLogs.logs === undefined){
-    lastCallObjectWithLogs.logs = [];
-   }
-   if(consumableLogs.length > 0){
-       for (let i = 0; i < consumableLogs.length; i++) {
-           const notAddedLog = consumableLogs[i];
-           lastCallObjectWithLogs.logs.push(notAddedLog);
-       }
-       lastCallObjectWithLogs.logs.sort(sortLogs);
-   }
-   return processedCallsArray;
+export function processCalls(
+    callObject: CallObject,
+    abiDecoder: any
+): ProcessedCall[] {
+    let processedCallsArray: ProcessedCall[] = [];
+    doProcessCall(processedCallsArray, callObject, abiDecoder, true);
+
+    if (lastCallObjectWithLogs.logs === undefined) {
+        lastCallObjectWithLogs.logs = [];
+    }
+    if (consumableLogs.length > 0) {
+        for (let i = 0; i < consumableLogs.length; i++) {
+            const notAddedLog = consumableLogs[i];
+            lastCallObjectWithLogs.logs.push(notAddedLog);
+        }
+        lastCallObjectWithLogs.logs.sort(sortLogs);
+    }
+    return processedCallsArray;
 }
 
-let lastCallObjectWithLogs:ProcessedCall;
-let consumableLogs:Log[] = [];
-let consumableErrorMsg :any = undefined;
+let lastCallObjectWithLogs: ProcessedCall;
+let consumableLogs: Log[] = [];
+let consumableErrorMsg: any = undefined;
 
-function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObject | Call, abiDecoder:any, firstCall = false) : void{
+function doProcessCall(
+    processedCallsArray: ProcessedCall[],
+    callObject: CallObject | Call,
+    abiDecoder: any,
+    firstCall = false
+): void {
     let transactionValue = new BigNumber(callObject.value);
     let hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
-    let decodedInput = callObject.input ? abiDecoder.decodeMethod(callObject.input) : undefined;
-    let interestingInput = decodedInput !== undefined && validFunctionNames.indexOf(decodedInput['name']) !== -1;
+    let decodedInput = callObject.input
+        ? abiDecoder.decodeMethod(callObject.input)
+        : undefined;
+    let interestingInput =
+        decodedInput !== undefined &&
+        validFunctionNames.indexOf(decodedInput['name']) !== -1;
     let hasLogs = callObject.logs != undefined;
-    if(hasLogs){
-        if(callObject.logs === undefined){
+    if (hasLogs) {
+        if (callObject.logs === undefined) {
             callObject.logs = [];
         }
-        callObject.logs.forEach(element => {
+        callObject.logs.forEach((element) => {
             consumableLogs.push(element);
         });
     }
-    if(callObject.type === 'DELEGATECALL'){
+    if (callObject.type === 'DELEGATECALL') {
         interestingInput = false;
         hasValue = false;
     }
-    if(callObject.error !== undefined){
+    if (callObject.error !== undefined) {
         consumableErrorMsg = callObject.error;
-        if(firstCall && callObject.calls === undefined){
-            if(!interestingInput && !hasValue){
+        if (firstCall && callObject.calls === undefined) {
+            if (!interestingInput && !hasValue) {
                 addCall(
                     processedCallsArray,
                     unknownTransfer,
@@ -69,11 +76,12 @@ function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObj
                     new BigNumber(0).toString(),
                     unknownTransfer,
                     unknownTransfer,
-                    hasLogs);
+                    hasLogs
+                );
             }
         }
     }
-    if(interestingInput) {
+    if (interestingInput) {
         switch (decodedInput['name']) {
             case transfer:
                 addCall(
@@ -84,9 +92,10 @@ function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObj
                     decodedInput.params[1].value,
                     decodedInput['name'],
                     decodedInput['name'],
-                    hasLogs);
+                    hasLogs
+                );
                 break;
-        
+
             case transferFrom:
                 addCall(
                     processedCallsArray,
@@ -96,39 +105,42 @@ function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObj
                     decodedInput.params[2].value,
                     decodedInput['name'],
                     transfer,
-                    hasLogs);
+                    hasLogs
+                );
                 break;
-            
+
             case deposit:
-                if(callObject.to.toLowerCase() === wethAddress){
+                if (callObject.to.toLowerCase() === wethAddress) {
                     addCall(
                         processedCallsArray,
-                        ethAddress, 
-                        callObject.to, 
-                        callObject.from, 
+                        ethAddress,
+                        callObject.to,
+                        callObject.from,
                         callObject.value,
-                        decodedInput['name'], 
+                        decodedInput['name'],
                         deposit,
-                        hasLogs);
+                        hasLogs
+                    );
                 }
                 break;
-        
-            case withdraw:                
-                if(callObject.to.toLowerCase() === wethAddress){
+
+            case withdraw:
+                if (callObject.to.toLowerCase() === wethAddress) {
                     addCall(
                         processedCallsArray,
-                        wethAddress, 
-                        callObject.to, 
-                        callObject.from, 
+                        wethAddress,
+                        callObject.to,
+                        callObject.from,
                         decodedInput.params[0].value,
-                        decodedInput['name'], 
+                        decodedInput['name'],
                         withdraw,
-                        hasLogs);
+                        hasLogs
+                    );
                 }
                 break;
         }
     }
-    if(hasValue && !interestingInput){
+    if (hasValue && !interestingInput) {
         addCall(
             processedCallsArray,
             ethAddress,
@@ -137,42 +149,52 @@ function doProcessCall(processedCallsArray:ProcessedCall[], callObject : CallObj
             callObject.value,
             ethTransfer,
             ethTransfer,
-            hasLogs);
+            hasLogs
+        );
     }
-    if(callObject.calls){
+    if (callObject.calls) {
         for (const _callObject of callObject.calls) {
             doProcessCall(processedCallsArray, _callObject, abiDecoder);
         }
     }
 }
 
-function addCall(txs : ProcessedCall[], token:string, to:string, from:string, rawValue:string, type:string, logCompareType:string, hasLogs:boolean) : void{
+function addCall(
+    txs: ProcessedCall[],
+    token: string,
+    to: string,
+    from: string,
+    rawValue: string,
+    type: string,
+    logCompareType: string,
+    hasLogs: boolean
+): void {
     consumableLogs.sort(sortLogs);
-    let newTxCall:ProcessedCall = {
+    let newTxCall: ProcessedCall = {
         token: token,
         to: to,
         from: from,
         rawValue: rawValue,
         type: type,
-        logCompareType: logCompareType
+        logCompareType: logCompareType,
     };
-    if(hasLogs){
+    if (hasLogs) {
         newTxCall.logs = consumableLogs;
         consumableLogs = [];
         lastCallObjectWithLogs = newTxCall;
     }
-    if(consumableErrorMsg != undefined){
+    if (consumableErrorMsg != undefined) {
         newTxCall.error = consumableErrorMsg;
-        consumableErrorMsg = "";
+        consumableErrorMsg = '';
     }
     txs.push(newTxCall);
 }
 
-function sortLogs( a:Log, b:Log) : number {
-    if ( a.logIndex < b.logIndex ){
+function sortLogs(a: Log, b: Log): number {
+    if (a.logIndex < b.logIndex) {
         return -1;
     }
-    if ( a.logIndex > b.logIndex ){
+    if (a.logIndex > b.logIndex) {
         return 1;
     }
     return 0;

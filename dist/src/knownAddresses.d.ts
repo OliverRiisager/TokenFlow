@@ -6,7 +6,10 @@ export declare class SymbolDecimal {
 export declare class TokenAddressToSymbolDecimal {
     tokenAddressToSymbolDecimal: Map<string, SymbolDecimal>;
     constructor();
-    AddTokenAddressSymbolDecimal(address: string, symbolDecimal: SymbolDecimal): boolean;
+    AddTokenAddressSymbolDecimal(
+        address: string,
+        symbolDecimal: SymbolDecimal
+    ): boolean;
     GetTokenSymbolDecimal(address: string): SymbolDecimal | null | undefined;
     HasTokenAddress(address: string): boolean;
 }

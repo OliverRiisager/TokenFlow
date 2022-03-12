@@ -1,3 +1,3 @@
 declare let fullTracer: string;
-export { fullTracer as tracer };
+export {fullTracer as tracer};
 //# sourceMappingURL=gethCustomTracer.d.ts.map

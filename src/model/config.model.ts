@@ -1,7 +1,5 @@
 export class Config {
-    httpGethProvider:string;
+    httpGethProvider: string = '';
 
-    constructor(){
-        
-    }
+    constructor() {}
 }

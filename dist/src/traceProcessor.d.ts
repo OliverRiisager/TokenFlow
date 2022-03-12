@@ -1,5 +1,5 @@
-import Web3 from "web3";
-import { Transfer } from './model';
+import Web3 from 'web3';
+import {Transfer} from './model';
 export declare class traceProcessor {
     web3: Web3;
     constructor();

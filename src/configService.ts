@@ -1,14 +1,12 @@
-
 import {Config} from './model';
 
 export class ConfigService {
+    config: Config = new Config();
+    static instance: ConfigService;
 
-    config: Config;
-    static instance : ConfigService;
+    constructor() {}
 
-    constructor() { }
-
-    static getInstance()  : ConfigService{
+    static getInstance(): ConfigService {
         if (!ConfigService.instance) {
             ConfigService.instance = new ConfigService();
         }
@@ -16,26 +14,27 @@ export class ConfigService {
         return ConfigService.instance;
     }
 
-    setConfig(configObj: Config) : void{
-        if(configObj.httpGethProvider === undefined){
-            throw new Error("config obj doesnt contain httpGethProvider value");
+    setConfig(configObj: Config): void {
+        if (configObj.httpGethProvider === undefined) {
+            throw new Error('config obj doesnt contain httpGethProvider value');
         }
-        
+
         this.config = configObj;
     }
 
-    setConfigFromUrl(providerAddress : string) : void{
-
-        if(typeof(providerAddress) !== typeof("")){
-            throw new Error("providerAddress is not of correct type");
+    setConfigFromUrl(providerAddress: string): void {
+        if (typeof providerAddress !== typeof '') {
+            throw new Error('providerAddress is not of correct type');
         }
-        if(providerAddress){
-            if(this.config === undefined){
+        if (providerAddress) {
+            if (this.config === undefined) {
                 this.config = new Config();
             }
             this.config.httpGethProvider = providerAddress;
-        }else{
-            throw new Error("providerAddress doest not contain a proper string");
+        } else {
+            throw new Error(
+                'providerAddress doest not contain a proper string'
+            );
         }
     }
 }

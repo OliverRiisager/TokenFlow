@@ -1,27 +1,27 @@
 {
+    "compileOnSave": false,
     "include": ["src/**/*"],
+    "exclude": ["src/**/*.test.ts", "test/*"],
     "compilerOptions": {
-      "target": "es2015",
-      "module": "commonjs",
-      "sourceMap": true,
-      // Tells TypeScript to read JS files, as
-      // normally they are ignored as source files
-      "allowJs": true,
-      // Generate d.ts files
-      "declaration": true,
-      // This compiler run should
-      // only output d.ts files
-      "emitDeclarationOnly": true,
-      // Types should go into this directory.
-      // Removing this would place the .d.ts files
-      // next to the .js files
-      "outDir": "dist",
-      // go to js file when using IDE functions like
-      // "Go to Definition" in VSCode
-      "declarationMap": true,
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "noUnusedLocals": true,
-      "noImplicitReturns": true,
+        "baseUrl": "./",
+        "module": "commonjs",
+        "target": "es2015",
+        "outDir": "./dist",
+        "sourceMap": true,
+        "declaration": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
+        "strict": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true,
+        "resolveJsonModule": true,
+        "strictNullChecks": true,
+        "typeRoots": ["node_modules/@types"],
+        "lib": ["es2018", "dom"]
     }
-  }
+}

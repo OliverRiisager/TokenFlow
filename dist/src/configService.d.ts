@@ -1,4 +1,4 @@
-import { Config } from './model';
+import {Config} from './model';
 export declare class ConfigService {
     config: Config;
     static instance: ConfigService;

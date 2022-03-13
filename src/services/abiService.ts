@@ -4,9 +4,9 @@ import weth20abi from '../../public/abis/wrappedEther.json';
 export class AbiService {
     static instance: AbiService;
 
-    erc20abi: any;
+    private erc20abi: any;
 
-    weth20abi: any;
+    private weth20abi: any;
 
     constructor() {
         this.erc20abi = erc20abi;
@@ -19,5 +19,12 @@ export class AbiService {
         }
 
         return AbiService.instance;
+    }
+
+    getErc20Abi():any {
+        return this.erc20abi;
+    }
+    getWeth20abiAbi():any {
+        return this.weth20abi;
     }
 }

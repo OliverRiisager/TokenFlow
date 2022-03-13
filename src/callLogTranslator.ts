@@ -94,7 +94,7 @@ function initializeTokenSymbolCallObjects(
     for (const tokenAddress of tokenAddresses) {
         if (!tokenAddressToSymbolDecimals.hasTokenAddress(tokenAddress)) {
             const erc20Contract = new web3.eth.Contract(
-                AbiService.getInstance().erc20abi,
+                AbiService.getInstance().getErc20Abi(),
                 tokenAddress
             );
             const symbolCall = erc20Contract.methods.symbol().call;
@@ -115,7 +115,7 @@ function initializeContractCallObjects(
     for (const contractAddress of contractAddresses) {
         if (contractAddressToNames.hasContractAddress(contractAddress)) {
             const erc20Contract = new web3.eth.Contract(
-                AbiService.getInstance().erc20abi,
+                AbiService.getInstance().getErc20Abi(),
                 contractAddress
             );
             const nameCall = erc20Contract.methods.name().call;

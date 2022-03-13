@@ -1,6 +1,6 @@
 {
     "compileOnSave": false,
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "tests"],
     "exclude": ["src/**/*.test.ts", "test/*"],
     "compilerOptions": {
         "baseUrl": "./",

@@ -3,7 +3,7 @@ import {Config} from '../model';
 export class ConfigService {
     static instance: ConfigService;
 
-    config: Config = new Config();
+    private config: Config = new Config();
 
     static getInstance(): ConfigService {
         if (!ConfigService.instance) {
@@ -13,12 +13,8 @@ export class ConfigService {
         return ConfigService.instance;
     }
 
-    setConfig(configObj: Config): void {
-        if (configObj.httpGethProvider === undefined) {
-            throw new Error('config obj doesnt contain httpGethProvider value');
-        }
-
-        this.config = configObj;
+    getConfig(): Config {
+        return this.config;
     }
 
     setConfigFromUrl(providerAddress: string): void {

@@ -1,4 +1,4 @@
-import {GethTrace, getTrace} from './traceGetter';
+import {getTrace} from './traceGetter';
 import {processCalls} from './callProcessor';
 import {processLogs} from './logProcessor';
 import {insertLogs} from './callLogCombiner';
@@ -11,6 +11,7 @@ import {
     Receipt,
     ProcessedCall,
     TransfersNodes,
+    GethTrace
 } from './model';
 import {DecodedLogConvert} from './jsonConverters';
 
@@ -23,10 +24,10 @@ export class TraceProcessor {
 
     constructor() {
         const abiDecoder = this.abiDecoderWrapper.abiDecoder;
-        abiDecoder.addABI(this.abiService.erc20abi);
-        abiDecoder.addABI(this.abiService.weth20abi);
+        abiDecoder.addABI(this.abiService.getErc20Abi());
+        abiDecoder.addABI(this.abiService.getWeth20abiAbi());
 
-        const config = ConfigService.getInstance().config;
+        const config = ConfigService.getInstance().getConfig();
 
         if (config === undefined) {
             throw 'config not defined - please create config through configservice.';
@@ -38,25 +39,11 @@ export class TraceProcessor {
         this.web3 = this.extendWeb3(web3Instance);
     }
 
-    extendWeb3(_web3Instance: Web3): Web3 {
-        _web3Instance.extend({
-            property: 'debug',
-            methods: [
-                {
-                    name: 'traceTransaction',
-                    call: 'debug_traceTransaction',
-                    params: 2,
-                },
-            ],
-        });
-        return _web3Instance;
-    }
-
     getTransfers(txHash: string) {
         return this.doGetTransfers(txHash);
     }
 
-    async doGetTransfers(txHash: string): Promise<TransfersNodes> {
+    private async doGetTransfers(txHash: string): Promise<TransfersNodes> {
         const rawTransferData = await this.getRawTransferData(txHash);
         const processedCalls = this.getProcessedCalls(rawTransferData);
         const receipt = this.getReceipt(rawTransferData);
@@ -73,7 +60,7 @@ export class TraceProcessor {
         return nodesAndTxs;
     }
 
-    async getRawTransferData(txHash: string): Promise<GethTrace> {
+    private async getRawTransferData(txHash: string): Promise<GethTrace> {
         const rawTransferData: GethTrace = await getTrace(txHash, this.web3);
         if (rawTransferData.error !== undefined) {
             throw rawTransferData.error;
@@ -81,7 +68,7 @@ export class TraceProcessor {
         return rawTransferData;
     }
 
-    getProcessedCalls(rawTransferData: GethTrace): ProcessedCall[] {
+    private getProcessedCalls(rawTransferData: GethTrace): ProcessedCall[] {
         const callObject: CallObject | null = rawTransferData.callObject;
         if (callObject === null) {
             throw 'Callobject is null - please double check your config';
@@ -89,7 +76,7 @@ export class TraceProcessor {
         return processCalls(callObject);
     }
 
-    getReceipt(rawTransferData: GethTrace) {
+    private getReceipt(rawTransferData: GethTrace) {
         const receipt = rawTransferData.receipt;
         if (receipt === null) {
             throw 'Receipt is null - please double check your config';
@@ -97,13 +84,13 @@ export class TraceProcessor {
         return receipt;
     }
 
-    getCombinedTxsAndLogs(receipt: Receipt, processedCalls: ProcessedCall[]) {
+    private getCombinedTxsAndLogs(receipt: Receipt, processedCalls: ProcessedCall[]) {
         const decodedLogs = this.getDecodeLogs(receipt);
         const processedLogs = processLogs(decodedLogs);
         return insertLogs(processedLogs, processedCalls);
     }
 
-    getDecodeLogs(receipt: Receipt) {
+    private getDecodeLogs(receipt: Receipt) {
         const abiDecoder = this.abiDecoderWrapper.abiDecoder;
         abiDecoder.keepNonDecodedLogs();
         const decodedLogJsonString = JSON.stringify(
@@ -115,5 +102,19 @@ export class TraceProcessor {
             throw 'JSON converting logs failed';
         }
         return decodedLogs;
+    }
+
+    private extendWeb3(_web3Instance: Web3): Web3 {
+        _web3Instance.extend({
+            property: 'debug',
+            methods: [
+                {
+                    name: 'traceTransaction',
+                    call: 'debug_traceTransaction',
+                    params: 2,
+                },
+            ],
+        });
+        return _web3Instance;
     }
 }

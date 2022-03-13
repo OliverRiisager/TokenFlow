@@ -8,10 +8,7 @@ var configService = require('tokenflow-geth/tools/configService');
 
 Choose from the following :
 
-configService.setConfigFromAddress("(YOUR GETH PROVIDER)");
-OR
-let configObj = {httpGethProvider: "(YOUR GETH PROVIDER)"}
-configService.setConfig(configObj);
+configService.setConfigFromUrl("(YOUR GETH PROVIDER)");
 
 then you can use the traceprocessorobject
 

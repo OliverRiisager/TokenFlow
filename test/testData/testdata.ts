@@ -1,0 +1,427 @@
+
+import * as Src from '../../src';
+
+export const callObject : Src.CallObject = {
+    type: "CALL",
+    from: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+    to: "0x111111125434b319222cdbf8c261674adb56f3ae",
+    value: "0x187b03ee0cf2800",
+    gas: "0x2fb32",
+    gasUsed: "0x29016",
+    input: "0x90411a32000000000000000000000000d47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000000d47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5000000000000000000000000af0bbec3ef0aee655ef0b7ee62124ca02e866b5f0000000000000000000000000000000000000000000000000187b03ee0cf280000000000000000000000000000000000000000000000000000000000037ad5e300000000000000000000000000000000000000000000000000000000037bba2c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e34c4c920c1b6a397cab786ebfd83dcaee1ff64000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000000260000000000000000000000000000000000000000000000000000000000000036000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000064d1660f99000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000001e34c4c920c1b6a397cab786ebfd83dcaee1ff640000000000000000000000000000000000000000000000000009cace5f38610000000000000000000000000000000000000000000000000000000000000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000017de5708196c70000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000004d0e30db000000000000000000000000000000000000000000000000000000000000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000044a9059cbb0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000000000000000000000000000017de5708196c70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000a4c9f12e9d0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000003af0bbec3ef0aee655ef0b7ee62124ca02e866b5f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    output: "0x00000000000000000000000000000000000000000000000000000000037bba2c",
+    logs: undefined,
+    time: "292.18124ms",
+    calls: [
+      {
+        type: "CALL",
+        from: "0x111111125434b319222cdbf8c261674adb56f3ae",
+        to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+        value: "0x187b03ee0cf2800",
+        gas: "0x2ac31",
+        gasUsed: "0x22921",
+        input: "0xa8920d2b00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000000260000000000000000000000000000000000000000000000000000000000000036000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000064d1660f99000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000001e34c4c920c1b6a397cab786ebfd83dcaee1ff640000000000000000000000000000000000000000000000000009cace5f38610000000000000000000000000000000000000000000000000000000000000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000017de5708196c70000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000004d0e30db000000000000000000000000000000000000000000000000000000000000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000044a9059cbb0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000000000000000000000000000017de5708196c70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000a4c9f12e9d0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000003af0bbec3ef0aee655ef0b7ee62124ca02e866b5f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        output: "0x",
+        logs: [
+          {
+            logIndex: 5,
+          },
+        ],
+        calls: [
+          {
+            type: "CALL",
+            from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            value: "0x0",
+            gas: "0x29a7f",
+            gasUsed: "0x1fc4",
+            input: "0xd1660f99000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000001e34c4c920c1b6a397cab786ebfd83dcaee1ff640000000000000000000000000000000000000000000000000009cace5f386100",
+            output: "0x",
+            logs: undefined,
+            calls: [
+              {
+                type: "CALL",
+                from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+                to: "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+                value: "0x9cace5f386100",
+                gas: undefined,
+                gasUsed: undefined,
+                input: "0x",
+                output: "0x",
+                logs: undefined,
+                calls: undefined,
+                error: undefined,
+              },
+            ],
+            error: undefined,
+          },
+          {
+            type: "CALL",
+            from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            value: "0x17de5708196c700",
+            gas: "0x25c09",
+            gasUsed: "0x5892",
+            input: "0xd0e30db0",
+            output: "0x",
+            logs: [
+              {
+                logIndex: 0,
+              },
+            ],
+            calls: undefined,
+            error: undefined,
+          },
+          {
+            type: "CALL",
+            from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            value: "0x0",
+            gas: "0x1ff1d",
+            gasUsed: "0x2ad2",
+            input: "0xa9059cbb0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000000000000000000000000000017de5708196c700",
+            output: "0x",
+            logs: [
+              {
+                logIndex: 1,
+              },
+            ],
+            calls: undefined,
+            error: undefined,
+          },
+          {
+            type: "CALL",
+            from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+            value: "0x0",
+            gas: "0x1cf12",
+            gasUsed: "0x152b5",
+            input: "0xc9f12e9d0000000000000000000000000d4a11d5eeaac28ec3f61d100daf4d40471f1852000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000003af0bbec3ef0aee655ef0b7ee62124ca02e866b5f0000000000000000000000000000000000000000000000000000000000000000",
+            output: "0x",
+            logs: undefined,
+            calls: [
+              {
+                type: "CALL",
+                from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+                to: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+                value: "0x0",
+                gas: "0x1a363",
+                gasUsed: "0x12d6a",
+                input: "0x022c0d9f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000037bba2c000000000000000000000000af0bbec3ef0aee655ef0b7ee62124ca02e866b5f00000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
+                output: "0x",
+                logs: undefined,
+                calls: [
+                  {
+                    type: "CALL",
+                    from: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+                    to: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+                    value: "0x0",
+                    gas: "0x174d3",
+                    gasUsed: "0x8729",
+                    input: "0xa9059cbb000000000000000000000000af0bbec3ef0aee655ef0b7ee62124ca02e866b5f00000000000000000000000000000000000000000000000000000000037bba2c",
+                    output: "0x",
+                    logs: [
+                      {
+                        logIndex: 2,
+                      },
+                      {
+                        logIndex: 3,
+                      },
+                      {
+                        logIndex: 4,
+                      },
+                    ],
+                    calls: undefined,
+                    error: undefined,
+                  },
+                ],
+                error: undefined,
+              },
+            ],
+            error: undefined,
+          },
+        ],
+        error: undefined,
+      },
+    ],
+    error: undefined,
+  }
+
+export const decodedLogs : (Src.DecodedLog | null)[] = [
+  {
+    name: "Deposit",
+    events: [
+      {
+        name: "dst",
+        type: "address",
+        value: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      },
+      {
+        name: "wad",
+        type: "uint256",
+        value: "107494237500000000",
+      },
+    ],
+    address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  {
+    name: "Transfer",
+    events: [
+      {
+        name: "src",
+        type: "address",
+        value: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      },
+      {
+        name: "dst",
+        type: "address",
+        value: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+      },
+      {
+        name: "wad",
+        type: "uint256",
+        value: "107494237500000000",
+      },
+    ],
+    address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  },
+  {
+    name: "Transfer",
+    events: [
+      {
+        name: "src",
+        type: "address",
+        value: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+      },
+      {
+        name: "dst",
+        type: "address",
+        value: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+      },
+      {
+        name: "wad",
+        type: "uint256",
+        value: "58440236",
+      },
+    ],
+    address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
+  null,
+  null,
+  null,
+]
+
+export const combinedLogsAndTxs : Src.Transfer[] = [
+  {
+    token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    to: "0x111111125434b319222cdbf8c261674adb56f3ae",
+    from: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+    rawValue: "0x187b03ee0cf2800",
+    type: "ethTransfer",
+    logCompareType: "ethTransfer",
+  },
+  {
+    token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    from: "0x111111125434b319222cdbf8c261674adb56f3ae",
+    rawValue: "0x187b03ee0cf2800",
+    type: "ethTransfer",
+    logCompareType: "ethTransfer",
+    logs: [
+      {
+        logIndex: 5,
+      },
+    ],
+  },
+  {
+    token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    to: "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+    from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    rawValue: "0x9cace5f386100",
+    type: "ethTransfer",
+    logCompareType: "ethTransfer",
+  },
+  {
+    token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    rawValue: "0x17de5708196c700",
+    type: "deposit",
+    logCompareType: "deposit",
+    logs: [
+      {
+        logIndex: 0,
+      },
+    ],
+  },
+  {
+    token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    from: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    rawValue: "107494237500000000",
+    type: "deposit",
+    isLog: true,
+    logIndex: 0,
+  },
+  {
+    token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    to: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    rawValue: "107494237500000000",
+    type: "transfer",
+    logCompareType: "transfer",
+    logs: [
+      {
+        logIndex: 1,
+      },
+    ],
+  },
+  {
+    token: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    to: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+    from: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+    rawValue: "58440236",
+    type: "transfer",
+    logCompareType: "transfer",
+    logs: [
+      {
+        logIndex: 2,
+      },
+      {
+        logIndex: 3,
+      },
+      {
+        logIndex: 4,
+      },
+    ],
+  },
+]
+
+
+export const nodesAndTxs: {combinedLogsAndTxs : Src.Transfer[], mappedNodes: Src.AddressNameObject[] } = {
+  combinedLogsAndTxs : [
+    {
+      token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      to: "0x111111125434b319222cdbf8c261674adb56f3ae",
+      from: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+      rawValue: "0x187b03ee0cf2800",
+      type: "ethTransfer",
+      logCompareType: "ethTransfer",
+      tokenName: "ETH",
+      value: 0.11,
+    },
+    {
+      token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      from: "0x111111125434b319222cdbf8c261674adb56f3ae",
+      rawValue: "0x187b03ee0cf2800",
+      type: "ethTransfer",
+      logCompareType: "ethTransfer",
+      logs: [
+        {
+          logIndex: 5,
+        },
+      ],
+      tokenName: "ETH",
+      value: 0.11,
+    },
+    {
+      token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      to: "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+      from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      rawValue: "0x9cace5f386100",
+      type: "ethTransfer",
+      logCompareType: "ethTransfer",
+      tokenName: "ETH",
+      value: 0.003,
+    },
+    {
+      token: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      to: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      rawValue: "0x17de5708196c700",
+      type: "deposit",
+      logCompareType: "deposit",
+      logs: [
+        {
+          logIndex: 0,
+        },
+      ],
+      tokenName: "ETH",
+      value: 0.107,
+    },
+    {
+      token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      to: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      from: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      rawValue: "107494237500000000",
+      type: "deposit",
+      isLog: true,
+      logIndex: 0,
+      tokenName: "WETH",
+      value: 0.107,
+    },
+    {
+      token: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      to: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+      from: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      rawValue: "107494237500000000",
+      type: "transfer",
+      logCompareType: "transfer",
+      logs: [
+        {
+          logIndex: 1,
+        },
+      ],
+      tokenName: "WETH",
+      value: 0.107,
+    },
+    {
+      token: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      to: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+      from: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+      rawValue: "58440236",
+      type: "transfer",
+      logCompareType: "transfer",
+      logs: [
+        {
+          logIndex: 2,
+        },
+        {
+          logIndex: 3,
+        },
+        {
+          logIndex: 4,
+        },
+      ],
+      tokenName: "USDT",
+      value: 58.44,
+    },
+  ],
+  mappedNodes: [
+    {
+      address: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
+      name: "sender",
+    },
+    {
+      address: "0x111111125434b319222cdbf8c261674adb56f3ae",
+      name: "1inch.exchange v2",
+    },
+    {
+      address: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+      name: "0xd47140f6ab73f6d6b6675fb1610bb5e9b5d96fe5",
+    },
+    {
+      address: "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+      name: "0x1e34c4c920c1b6a397cab786ebfd83dcaee1ff64",
+    },
+    {
+      address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      name: "WETH contract",
+    },
+    {
+      address: "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852",
+      name: "Uniswap V2, USDT 2",
+    },
+  ]
+}

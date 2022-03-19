@@ -14,9 +14,11 @@ then you can use the traceprocessorobject
 
 var traceprocessor = require('tokenflow-geth/tools/traceProcessor');
 
-let traceprocessorInstance = new traceprocessor();
+let traceprocessorInstance = new traceprocessor({YOU PROVIDERCONNECTOR INSTANCE});
 
 traceProcessorInstance.getTransfers("(SOME TRANSACTION HASH)");
+
+You can choose not to use the configService to store your API key and instead opt for creating a providerConnector instance with everything already there.
 
 # Test transactions:
 

@@ -33,12 +33,28 @@ export class TraceProcessor {
         return this.doGetTransfers(txHash);
     }
 
+    getDecodeLogs(receipt: Receipt) {
+        const abiDecoder = this.abiDecoderService.abiDecoder;
+        abiDecoder.keepNonDecodedLogs();
+        const decodedLogJsonString = JSON.stringify(
+            abiDecoder.decodeLogs(receipt.logs)
+        );
+        const decodedLogs: (DecodedLog | null)[] =
+            DecodedLogConvert.toDecodedLog(decodedLogJsonString);
+        if (decodedLogs === null) {
+            throw 'JSON converting logs failed';
+        }
+        return decodedLogs;
+    }
+
     private async doGetTransfers(txHash: string): Promise<TransfersNodes> {
         const rawTransferData = await this.getRawTransferData(txHash);
         const processedCalls = this.getProcessedCalls(rawTransferData);
         const receipt = this.getReceipt(rawTransferData);
-        const combinedTxsAndLogs = this.getCombinedTxsAndLogs(
-            receipt,
+        const decodedLogs = this.getDecodeLogs(receipt);
+        const processedLogs = processLogs(decodedLogs);
+        const combinedTxsAndLogs = insertLogs(
+            processedLogs,
             processedCalls
         );
 
@@ -61,7 +77,7 @@ export class TraceProcessor {
     private getProcessedCalls(rawTransferData: GethTrace): ProcessedCall[] {
         const callObject: CallObject | null = rawTransferData.callObject;
         if (callObject === null) {
-            throw 'Callobject is null - please double check your config';
+            throw 'Callobject is null - please double check your providerconnector';
         }
         return processCalls(callObject);
     }
@@ -69,28 +85,8 @@ export class TraceProcessor {
     private getReceipt(rawTransferData: GethTrace) {
         const receipt = rawTransferData.receipt;
         if (receipt === null) {
-            throw 'Receipt is null - please double check your config';
+            throw 'Receipt is null - please double check your providerconnector';
         }
         return receipt;
-    }
-
-    private getCombinedTxsAndLogs(receipt: Receipt, processedCalls: ProcessedCall[]) {
-        const decodedLogs = this.getDecodeLogs(receipt);
-        const processedLogs = processLogs(decodedLogs);
-        return insertLogs(processedLogs, processedCalls);
-    }
-
-    private getDecodeLogs(receipt: Receipt) {
-        const abiDecoder = this.abiDecoderService.abiDecoder;
-        abiDecoder.keepNonDecodedLogs();
-        const decodedLogJsonString = JSON.stringify(
-            abiDecoder.decodeLogs(receipt.logs)
-        );
-        const decodedLogs: (DecodedLog | null)[] =
-            DecodedLogConvert.toDecodedLog(decodedLogJsonString);
-        if (decodedLogs === null) {
-            throw 'JSON converting logs failed';
-        }
-        return decodedLogs;
     }
 }

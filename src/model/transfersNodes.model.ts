@@ -2,10 +2,10 @@ import {Transfer} from '.';
 
 export interface TransfersNodes {
     transfers: Transfer[];
-    nodes: Nodes[];
+    nodes: AddressNameObject[];
 }
 
-export interface Nodes {
+export interface AddressNameObject {
     address: string;
     name: string | undefined;
 }

@@ -4,10 +4,9 @@ import {
     tokenAddressToSymbolDecimals,
     SymbolDecimal,
 } from './knownAddresses';
-import {Transfer, TransfersNodes} from './model';
-import Web3 from 'web3';
-import {BatchRequest} from 'web3-core';
+import {Transfer, TransfersNodes, AddressNameObject} from './model';
 import {AbiService} from './services';
+import { ProviderConnector } from './connector/provider.connector';
 
 /* eslint-disable @typescript-eslint/no-explicit-any*/
 const contractCallObjects: {address: string; nameCall: any}[] = [];
@@ -20,13 +19,13 @@ const contractPromises: any[] = [];
 
 export async function translateCallsAndLogs(
     combinedLogsAndTxs: Transfer[],
-    web3: Web3,
+    providerConnector: ProviderConnector,
     senderAddress: string
 ): Promise<TransfersNodes> {
     const tokenAddressesAndNodes =
         getNodesAndTokenAddresses(combinedLogsAndTxs);
     try {
-        await mapAddressesToNames(tokenAddressesAndNodes, web3);
+        await mapAddressesToNames(tokenAddressesAndNodes, providerConnector);
     } catch (e) {
         console.log('Error encountered when mapping adresses to names ' + e);
     }
@@ -34,7 +33,7 @@ export async function translateCallsAndLogs(
         tokenAddressesAndNodes.nodes,
         senderAddress
     );
-    fixCombinedLogsAndTxs(combinedLogsAndTxs);
+    setTokenNameAndValues(combinedLogsAndTxs);
     return {
         transfers: combinedLogsAndTxs,
         nodes: mappedNodes,
@@ -64,39 +63,38 @@ function getNodesAndTokenAddresses(combinedLogsAndTxs: Transfer[]): {
 
 async function mapAddressesToNames(
     tokenAddressesAndNodes: {tokenAddresses: string[]; nodes: string[]},
-    web3: Web3
+    providerConnector: ProviderConnector
 ): Promise<void> {
     createContractAndTokenCallObjects(
         tokenAddressesAndNodes.tokenAddresses,
         tokenAddressesAndNodes.nodes,
-        web3
+        providerConnector
     );
 
     if (tokenCallObjects.length == 0 && contractCallObjects.length == 0) {
         return;
     }
-    return createAndResolvePromises(web3);
+    return createAndResolvePromises(providerConnector);
 }
 
 function createContractAndTokenCallObjects(
     tokenAddresses: string[],
     contractAddresses: string[],
-    web3: Web3
+    providerConnector: ProviderConnector
 ): void {
-    initializeTokenSymbolCallObjects(tokenAddresses, web3);
-    initializeContractCallObjects(contractAddresses, web3);
+    initializeTokenSymbolCallObjects(tokenAddresses, providerConnector);
+    initializeContractCallObjects(contractAddresses, providerConnector);
 }
 
 function initializeTokenSymbolCallObjects(
     tokenAddresses: string[],
-    web3: Web3
+    providerConnector: ProviderConnector
 ): void {
     for (const tokenAddress of tokenAddresses) {
         if (!tokenAddressToSymbolDecimals.hasTokenAddress(tokenAddress)) {
-            const erc20Contract = new web3.eth.Contract(
+            const erc20Contract = providerConnector.getContract(
                 AbiService.getInstance().getErc20Abi(),
-                tokenAddress
-            );
+                tokenAddress);
             const symbolCall = erc20Contract.methods.symbol().call;
             const decimalsCall = erc20Contract.methods.decimals().call;
             tokenCallObjects.push({
@@ -110,11 +108,11 @@ function initializeTokenSymbolCallObjects(
 
 function initializeContractCallObjects(
     contractAddresses: string[],
-    web3: Web3
+    providerConnector: ProviderConnector
 ): void {
     for (const contractAddress of contractAddresses) {
         if (contractAddressToNames.hasContractAddress(contractAddress)) {
-            const erc20Contract = new web3.eth.Contract(
+            const erc20Contract = providerConnector.getContract(
                 AbiService.getInstance().getErc20Abi(),
                 contractAddress
             );
@@ -127,24 +125,24 @@ function initializeContractCallObjects(
     }
 }
 
-function createAndPushTokenPromises(batch: BatchRequest): void {
+function createAndPushTokenPromises(provider: ProviderConnector): void {
     for (const tokenCallObject of tokenCallObjects) {
         pushPromise(
             tokenPromises,
             tokenCallObject.symbolCall,
-            batch,
+            provider,
             tokenCallObject.address
         );
-        pushPromise(tokenPromises, tokenCallObject.decimalCall, batch, 18);
+        pushPromise(tokenPromises, tokenCallObject.decimalCall, provider, 18);
     }
 }
 
-function createAndPushContractPromises(batch: BatchRequest): void {
+function createAndPushContractPromises(provider: ProviderConnector): void {
     for (const contractCallObject of contractCallObjects) {
         pushPromise(
             contractPromises,
             contractCallObject.nameCall,
-            batch,
+            provider,
             contractCallObject.address
         );
     }
@@ -153,7 +151,7 @@ function createAndPushContractPromises(batch: BatchRequest): void {
 function pushPromise(
     promises: any[],
     functionCall: any,
-    batch: BatchRequest,
+    provider: ProviderConnector,
     backup: any = undefined
 ): void {
     promises.push(
@@ -169,22 +167,21 @@ function pushPromise(
                     }
                 }
             );
-            batch.add(req);
+            provider.addRequestToBatch(req);
         })
     );
 }
 /* eslint-enable @typescript-eslint/no-explicit-any*/
 
-async function createAndResolvePromises(web3: Web3): Promise<void> {
-    const batch = new web3.BatchRequest();
-    createAndPushTokenPromises(batch);
-    createAndPushContractPromises(batch);
+async function createAndResolvePromises(provider: ProviderConnector): Promise<void> {
+    createAndPushTokenPromises(provider);
+    createAndPushContractPromises(provider);
 
-    return await resolvePromisesAndAddNames(batch);
+    return await resolvePromisesAndAddNames(provider);
 }
 
-async function resolvePromisesAndAddNames(batch: BatchRequest): Promise<void> {
-    batch.execute();
+async function resolvePromisesAndAddNames(provider: ProviderConnector): Promise<void> {
+    provider.executeBatch();
     const tokenInformation = await resolvePromises(tokenPromises);
     const contractInformation = await resolvePromises(contractPromises);
 
@@ -229,8 +226,8 @@ async function resolvePromises(promises: any[]): Promise<any[]> {
 function createMappedNodes(
     nodes: string[],
     senderAddress: string
-): {address: string; name: string | undefined}[] {
-    let mappedNodes: {address: string; name: string | undefined}[] = [];
+): AddressNameObject[] {
+    let mappedNodes: AddressNameObject[] = [];
     mappedNodes = nodes.map((node) => {
         return {
             address: node,
@@ -246,7 +243,7 @@ function createMappedNodes(
 }
 /* eslint-enable @typescript-eslint/no-explicit-any*/
 
-function fixCombinedLogsAndTxs(combinedLogsAndTxs: Transfer[]) {
+function setTokenNameAndValues(combinedLogsAndTxs: Transfer[]) {
     combinedLogsAndTxs.forEach((tx) => {
         const tokenSymbolDecimal =
             tokenAddressToSymbolDecimals.getTokenSymbolDecimal(tx.token);

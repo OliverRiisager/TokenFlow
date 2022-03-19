@@ -3,8 +3,7 @@ import {processCalls} from './callProcessor';
 import {processLogs} from './logProcessor';
 import {insertLogs} from './callLogCombiner';
 import {translateCallsAndLogs} from './callLogTranslator';
-import Web3 from 'web3';
-import {ConfigService, AbiDecoderService, AbiService} from './services';
+import {AbiDecoderService, AbiService} from './services';
 import {
     CallObject,
     DecodedLog,
@@ -14,29 +13,20 @@ import {
     GethTrace
 } from './model';
 import {DecodedLogConvert} from './jsonConverters';
+import { ProviderConnector } from './connector/provider.connector';
 
 export class TraceProcessor {
-    web3: Web3;
+    private providerConnector: ProviderConnector;
 
-    abiDecoderWrapper: AbiDecoderService = AbiDecoderService.getInstance();
+    private  abiDecoderService: AbiDecoderService = AbiDecoderService.getInstance();
 
-    abiService: AbiService = AbiService.getInstance();
+    private abiService: AbiService = AbiService.getInstance();
 
-    constructor() {
-        const abiDecoder = this.abiDecoderWrapper.abiDecoder;
+    constructor(providerConnector: ProviderConnector) {
+        const abiDecoder = this.abiDecoderService.abiDecoder;
         abiDecoder.addABI(this.abiService.getErc20Abi());
         abiDecoder.addABI(this.abiService.getWeth20abiAbi());
-
-        const config = ConfigService.getInstance().getConfig();
-
-        if (config === undefined) {
-            throw 'config not defined - please create config through configservice.';
-        }
-
-        const web3Instance = new Web3(
-            new Web3.providers.HttpProvider(config.httpGethProvider)
-        );
-        this.web3 = this.extendWeb3(web3Instance);
+        this.providerConnector = providerConnector;
     }
 
     getTransfers(txHash: string) {
@@ -54,14 +44,14 @@ export class TraceProcessor {
 
         const nodesAndTxs = await translateCallsAndLogs(
             combinedTxsAndLogs,
-            this.web3,
+            this.providerConnector,
             receipt.from
         );
         return nodesAndTxs;
     }
 
     private async getRawTransferData(txHash: string): Promise<GethTrace> {
-        const rawTransferData: GethTrace = await getTrace(txHash, this.web3);
+        const rawTransferData: GethTrace = await getTrace(txHash, this.providerConnector);
         if (rawTransferData.error !== undefined) {
             throw rawTransferData.error;
         }
@@ -91,7 +81,7 @@ export class TraceProcessor {
     }
 
     private getDecodeLogs(receipt: Receipt) {
-        const abiDecoder = this.abiDecoderWrapper.abiDecoder;
+        const abiDecoder = this.abiDecoderService.abiDecoder;
         abiDecoder.keepNonDecodedLogs();
         const decodedLogJsonString = JSON.stringify(
             abiDecoder.decodeLogs(receipt.logs)
@@ -102,19 +92,5 @@ export class TraceProcessor {
             throw 'JSON converting logs failed';
         }
         return decodedLogs;
-    }
-
-    private extendWeb3(_web3Instance: Web3): Web3 {
-        _web3Instance.extend({
-            property: 'debug',
-            methods: [
-                {
-                    name: 'traceTransaction',
-                    call: 'debug_traceTransaction',
-                    params: 2,
-                },
-            ],
-        });
-        return _web3Instance;
     }
 }

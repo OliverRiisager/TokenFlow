@@ -4,33 +4,38 @@ import {
     ConvertReceipt,
     ConvertCallObject,
 } from './jsonConverters';
-import Web3 from 'web3';
+import { ProviderConnector } from './connector/provider.connector';
 
-export async function getTrace(txhash: string, web3: Web3): Promise<GethTrace> {
-    const gethTrace = await getGethTrace(web3, txhash);
+export async function getTrace(
+    txhash: string, 
+    providerConnector: ProviderConnector
+): Promise<GethTrace> {
+    const gethTrace = await getGethTrace(providerConnector, txhash);
     return gethTrace;
 }
 
-async function getGethTrace(web3: Web3, txhash: string): Promise<GethTrace> {
+async function getGethTrace(
+    providerConnector: ProviderConnector, 
+    txhash: string
+): Promise<GethTrace> {
     try {
         /* eslint-disable */
         // @ts-ignore
-        const callObjectData = await (web3 as any).debug.traceTransaction(
+        const callObjectData = await providerConnector.traceTransaction(
             txhash,
-            {reexec: 5000, tracer: tracer}
+            tracer
         );
         /* eslint-enable */
         const callObject: CallObject = ConvertCallObject.toCallObject(
             JSON.stringify(callObjectData)
         );
-        const receiptData = await web3.eth.getTransactionReceipt(txhash);
+        const receiptData = await providerConnector.getTransactionReceipt(txhash);
         const receipt: Receipt = ConvertReceipt.toReceipt(
             JSON.stringify(receiptData)
         );
         return {callObject: callObject, receipt: receipt};
     } catch (e) {
         const error = 'An error occured when getting Geth Trace ' + e;
-        console.log(error);
         return {callObject: null, receipt: null, error: error};
     }
 }

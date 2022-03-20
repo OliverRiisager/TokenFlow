@@ -1,5 +1,5 @@
 
-import * as Src from '../../src';
+import * as Src from '../src';
 
 export const callObject : Src.CallObject = {
     type: "CALL",

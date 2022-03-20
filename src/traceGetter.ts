@@ -19,13 +19,10 @@ async function getGethTrace(
     txhash: string
 ): Promise<GethTrace> {
     try {
-        /* eslint-disable */
-        // @ts-ignore
         const callObjectData = await providerConnector.traceTransaction(
             txhash,
             tracer
         );
-        /* eslint-enable */
         const callObject: CallObject = ConvertCallObject.toCallObject(
             JSON.stringify(callObjectData)
         );

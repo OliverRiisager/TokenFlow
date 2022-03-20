@@ -1,6 +1,6 @@
 {
     "name": "tokenflow-geth",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "description": "http://tokenflow.xyz",
     "main": "./src/index.ts",
     "typings": "./src/index.d.ts",

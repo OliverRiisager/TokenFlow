@@ -7,5 +7,4 @@ export * from './methods.model';
 export * from './receipt.model';
 export * from './transferObject.model';
 export * from './transfersNodes.model';
-export * from './config.model';
 export * from './gethTrace.model';

@@ -47,8 +47,11 @@ export class TraceProcessor {
         return decodedLogs;
     }
 
-    private async doGetTransfers(txHash: string): Promise<TransfersNodes> {
-        const rawTransferData = await this.getRawTransferData(txHash);
+    async getDecodedTrace(rawTransferData : GethTrace) : Promise<TransfersNodes>{
+        if(rawTransferData.error !== undefined){
+            console.log("hehehe");
+            throw new Error(rawTransferData.error);
+        }
         const processedCalls = this.getProcessedCalls(rawTransferData);
         const receipt = this.getReceipt(rawTransferData);
         const decodedLogs = this.getDecodeLogs(receipt);
@@ -64,6 +67,11 @@ export class TraceProcessor {
             receipt.from
         );
         return nodesAndTxs;
+    }
+
+    private async doGetTransfers(txHash: string): Promise<TransfersNodes> {
+        const rawTransferData = await this.getRawTransferData(txHash);
+        return await this.getDecodedTrace(rawTransferData);
     }
 
     private async getRawTransferData(txHash: string): Promise<GethTrace> {

@@ -1,11 +1,14 @@
-export interface ProviderConnector{
 
-    /* eslint-disable */
-    //@ts-ignore
-    traceTransaction(txHash:string, customTracer: string):Promise<any>;
-    getTransactionReceipt(txHash:string):Promise<any>;
-    getContract(abiItem:any, address:string) : any;
-    addRequestToBatch(promise: Promise<any>):void;
-    executeBatch():void;
-    /* eslint-enable */
+import { SymbolDecimal } from "../knownAddresses";
+import { CallObject, Receipt } from "../model";
+
+export interface ProviderConnector{
+    traceTransaction(txHash:string, customTracer: string):Promise<CallObject>;
+    getTransactionReceipt(txHash:string):Promise<Receipt>;
+    resolveContractNamesAndTokenSymbolDecimals() : boolean;
+    resolveContractNamesSymbolsAndDecimals?(
+        contractAddresses:string[], tokenAddresses:string[]) 
+    : Promise<{
+        contractNames: {address:string, name:string }[],
+        tokenSymbolsAndDecimals:{address: string, symbolDecimal: SymbolDecimal}[]}>;
 }

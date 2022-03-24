@@ -3,7 +3,7 @@ import {processCalls} from './callProcessor';
 import {processLogs} from './logProcessor';
 import {insertLogs} from './callLogCombiner';
 import {translateCallsAndLogs} from './callLogTranslator';
-import {AbiDecoderService, AbiService} from './services';
+import {AbiDecoderService} from './services';
 import {
     CallObject,
     DecodedLog,
@@ -14,18 +14,18 @@ import {
 } from './model';
 import {DecodedLogConvert} from './jsonConverters';
 import { ProviderConnector } from './connector/provider.connector';
+import erc20Abi from '../public/abis/erc20.json';
+import wethAbi from '../public/abis/wrappedEther.json';
 
 export class TraceProcessor {
     private providerConnector: ProviderConnector;
 
     private  abiDecoderService: AbiDecoderService = AbiDecoderService.getInstance();
 
-    private abiService: AbiService = AbiService.getInstance();
-
     constructor(providerConnector: ProviderConnector) {
         const abiDecoder = this.abiDecoderService.abiDecoder;
-        abiDecoder.addABI(this.abiService.getErc20Abi());
-        abiDecoder.addABI(this.abiService.getWeth20abiAbi());
+        abiDecoder.addABI(erc20Abi);
+        abiDecoder.addABI(wethAbi);
         this.providerConnector = providerConnector;
     }
 

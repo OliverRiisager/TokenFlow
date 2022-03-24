@@ -8,3 +8,4 @@ export * from './receipt.model';
 export * from './transferObject.model';
 export * from './transfersNodes.model';
 export * from './gethTrace.model';
+export * from './abi.model';

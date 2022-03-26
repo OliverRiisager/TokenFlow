@@ -3,27 +3,27 @@ import {processCalls} from './callProcessor';
 import {processLogs} from './logProcessor';
 import {insertLogs} from './callLogCombiner';
 import {translateCallsAndLogs} from './callLogTranslator';
-import {AbiDecoderService} from './services';
+/* eslint-disable @typescript-eslint/ban-ts-comment*/
+// @ts-ignore
+import abiDecoder from 'abi-decoder';
+/* eslint-enable @typescript-eslint/ban-ts-comment*/
 import {
     CallObject,
     DecodedLog,
     Receipt,
     ProcessedCall,
     TransfersNodes,
-    GethTrace
+    GethTrace,
 } from './model';
 import {DecodedLogConvert} from './jsonConverters';
-import { ProviderConnector } from './connector/provider.connector';
+import {ProviderConnector} from './connector/provider.connector';
 import erc20Abi from '../public/abis/erc20.json';
 import wethAbi from '../public/abis/wrappedEther.json';
 
 export class TraceProcessor {
     private providerConnector: ProviderConnector;
 
-    private  abiDecoderService: AbiDecoderService = AbiDecoderService.getInstance();
-
     constructor(providerConnector: ProviderConnector) {
-        const abiDecoder = this.abiDecoderService.abiDecoder;
         abiDecoder.addABI(erc20Abi);
         abiDecoder.addABI(wethAbi);
         this.providerConnector = providerConnector;
@@ -34,7 +34,6 @@ export class TraceProcessor {
     }
 
     getDecodeLogs(receipt: Receipt) {
-        const abiDecoder = this.abiDecoderService.abiDecoder;
         abiDecoder.keepNonDecodedLogs();
         const decodedLogJsonString = JSON.stringify(
             abiDecoder.decodeLogs(receipt.logs)
@@ -47,19 +46,16 @@ export class TraceProcessor {
         return decodedLogs;
     }
 
-    async getDecodedTrace(rawTransferData : GethTrace) : Promise<TransfersNodes>{
-        if(rawTransferData.error !== undefined){
-            console.log("hehehe");
+    async getDecodedTrace(rawTransferData: GethTrace): Promise<TransfersNodes> {
+        if (rawTransferData.error !== undefined) {
+            console.log('hehehe');
             throw new Error(rawTransferData.error);
         }
         const processedCalls = this.getProcessedCalls(rawTransferData);
         const receipt = this.getReceipt(rawTransferData);
         const decodedLogs = this.getDecodeLogs(receipt);
         const processedLogs = processLogs(decodedLogs);
-        const combinedTxsAndLogs = insertLogs(
-            processedLogs,
-            processedCalls
-        );
+        const combinedTxsAndLogs = insertLogs(processedLogs, processedCalls);
 
         const nodesAndTxs = await translateCallsAndLogs(
             combinedTxsAndLogs,
@@ -75,7 +71,10 @@ export class TraceProcessor {
     }
 
     private async getRawTransferData(txHash: string): Promise<GethTrace> {
-        const rawTransferData: GethTrace = await getTrace(txHash, this.providerConnector);
+        const rawTransferData: GethTrace = await getTrace(
+            txHash,
+            this.providerConnector
+        );
         if (rawTransferData.error !== undefined) {
             throw rawTransferData.error;
         }

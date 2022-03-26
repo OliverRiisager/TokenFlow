@@ -3,7 +3,10 @@ import BigNumber from 'bignumber.js';
 import {ethAddress, wethAddress} from './knownAddresses';
 import {Call, CallObject, Log, ProcessedCall} from './index';
 import {Methods} from './model/methods.model';
-import {AbiDecoderService} from './services/abiDecoderService';
+/* eslint-disable @typescript-eslint/ban-ts-comment*/
+// @ts-ignore
+import abiDecoder from 'abi-decoder';
+/* eslint-enable @typescript-eslint/ban-ts-comment*/
 
 const transfer = Methods.Transfer;
 const transferFrom = Methods.TransferFrom;
@@ -14,7 +17,7 @@ const unknownTransfer = Methods.Unknown;
 
 const validFunctionNames = [transfer, transferFrom, deposit, withdraw];
 
-const processedCallsArray: ProcessedCall[] = [];
+let processedCallsArray: ProcessedCall[] = [];
 let lastCallObjectWithLogs: ProcessedCall;
 let consumableLogs: Log[] = [];
 let consumableErrorMsg: string | undefined = undefined;
@@ -27,6 +30,7 @@ let decodedInput: any = undefined;
 /* eslint-enable @typescript-eslint/no-explicit-any*/
 
 export function processCalls(callObject: CallObject): ProcessedCall[] {
+    processedCallsArray = [];
     doProcessCall(callObject, true);
 
     if (lastCallObjectWithLogs.logs === undefined) {
@@ -46,9 +50,7 @@ function doProcessCall(callObject: CallObject | Call, firstCall = false): void {
     const transactionValue = new BigNumber(callObject.value);
     hasValue = !transactionValue.isNaN() && !transactionValue.isZero();
     decodedInput = callObject.input
-        ? AbiDecoderService.getInstance().abiDecoder.decodeMethod(
-              callObject.input
-          )
+        ? abiDecoder.decodeMethod(callObject.input)
         : undefined;
     validateCall(callObject);
     if (callObject.error !== undefined) {

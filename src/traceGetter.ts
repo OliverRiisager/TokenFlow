@@ -1,13 +1,9 @@
 import {tracer} from './gethCustomTracer';
-import {CallObject, Receipt, GethTrace} from './model';
-import {
-    ConvertReceipt,
-    ConvertCallObject,
-} from './jsonConverters';
-import { ProviderConnector } from './connector/provider.connector';
+import {GethTrace} from './model';
+import {ProviderConnector} from './connector/provider.connector';
 
 export async function getTrace(
-    txhash: string, 
+    txhash: string,
     providerConnector: ProviderConnector
 ): Promise<GethTrace> {
     const gethTrace = await getGethTrace(providerConnector, txhash);
@@ -15,20 +11,16 @@ export async function getTrace(
 }
 
 async function getGethTrace(
-    providerConnector: ProviderConnector, 
+    providerConnector: ProviderConnector,
     txhash: string
 ): Promise<GethTrace> {
     try {
-        const callObjectData = await providerConnector.traceTransaction(
+        const callObject = await providerConnector.traceTransaction(
             txhash,
             tracer
         );
-        const callObject: CallObject = ConvertCallObject.toCallObject(
-            JSON.stringify(callObjectData)
-        );
-        const receiptData = await providerConnector.getTransactionReceipt(txhash);
-        const receipt: Receipt = ConvertReceipt.toReceipt(
-            JSON.stringify(receiptData)
+        const receipt = await providerConnector.getTransactionReceipt(
+            txhash
         );
         return {callObject: callObject, receipt: receipt};
     } catch (e) {

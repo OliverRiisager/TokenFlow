@@ -1,152 +1,215 @@
-import Web3 from "web3";
-import { BatchRequest } from "web3-core";
-import { ProviderConnector } from "./provider.connector";
-import { CallObject, Receipt } from "../model";
-import { ConvertReceipt, ConvertCallObject } from "../jsonConverters";
-import { tokenAddressToSymbolDecimals, contractAddressToNames, SymbolDecimal } from "../knownAddresses";
-import { Contract } from "web3-eth-contract";
+import Web3 from 'web3';
+import {BatchRequest} from 'web3-core';
+import {ProviderConnector} from './provider.connector';
+import {CallObject, Receipt} from '../model';
+import {ConvertReceipt, ConvertCallObject} from '../jsonConverters';
+import {SymbolDecimal} from '../knownAddresses';
+import {Contract} from 'web3-eth-contract';
 import erc20Abi from '../../public/abis/erc20.json';
-export class Web3Provider implements ProviderConnector{
 
+export class Web3Provider implements ProviderConnector {
     protected readonly web3: Web3;
 
     protected batch: BatchRequest;
-    
-    protected addressToTokens: Map<string, Contract> = new Map<string, Contract>();
-    protected addressToContractMap: Map<string, Contract> = new Map<string, Contract>();
 
-    constructor(web3: Web3){
+    protected addressToTokens: Map<string, Contract> = new Map<
+        string,
+        Contract
+    >();
+
+    protected addressToContractMap: Map<string, Contract> = new Map<
+        string,
+        Contract
+    >();
+
+    constructor(web3: Web3) {
         this.web3 = this.extendWeb3(web3);
         this.batch = new web3.BatchRequest();
     }
 
-    async traceTransaction(txHash: string, customTracer: string): Promise<CallObject> {
-        try{
+    async traceTransaction(
+        txHash: string,
+        customTracer: string
+    ): Promise<CallObject> {
+        try {
+            /* eslint-disable max-len*/
+            /* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any*/
             //@ts-ignore
-            var callObjectData = await (this.web3 as any).debug.traceTransaction(
-                txHash,
-                {reexec: 5000, tracer: customTracer}
+            const callObjectData = await (
+                this.web3 as any
+            ).debug.traceTransaction(txHash, {
+                reexec: 5000,
+                tracer: customTracer,
+            });
+            /* eslint-enable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any */
+            /* eslint-enable max-len*/
+            return ConvertCallObject.toCallObject(
+                JSON.stringify(callObjectData)
             );
-            return ConvertCallObject.toCallObject(JSON.stringify(callObjectData));
-        }catch(e){
-            console.log("ERR: " + e);
+        } catch (e) {
+            console.log('ERR: ' + e);
             throw e;
         }
     }
 
-    async getTransactionReceipt(txHash: string): Promise<Receipt> {        
-        try{
-            var receiptData = await this.web3.eth.getTransactionReceipt(txHash);
+    async getTransactionReceipt(txHash: string): Promise<Receipt> {
+        try {
+            const receiptData = await this.web3.eth.getTransactionReceipt(
+                txHash
+            );
             return ConvertReceipt.toReceipt(JSON.stringify(receiptData));
-        }catch(e){
-            console.log("ERR: " + e);
+        } catch (e) {
+            console.log('ERR: ' + e);
             throw e;
         }
     }
 
-    resolveContractNamesAndTokenSymbolDecimals() : boolean {return true;}
+    resolveContractNamesAndTokenSymbolDecimals(): boolean {
+        return true;
+    }
 
+    /* eslint-disable max-lines-per-function*/
     async resolveContractNamesSymbolsAndDecimals(
-        contractAddresses: string[], 
-        tokenAddresses: string[])
-    : Promise<{
-        contractNames: {address:string, name:string}[],
+        contractAddresses: string[],
+        tokenAddresses: string[]
+    ): Promise<{
+        contractNames: {address: string; name: string}[];
         tokenSymbolsAndDecimals: {
-            address: string, symbolDecimal: SymbolDecimal;
-        }[]
-    }> 
-    {
-        const resolvedTokenSymbolsAndDecimals: { address: string; symbolDecimal: SymbolDecimal; }[] = [];
-        const resolvedContractNames: {address:string, name:string}[] = [];
-        contractAddresses.forEach(element => {
-            if(!contractAddressToNames.hasContractAddress(element)){
-                if(!this.addressToContractMap.has(element)){
-                    this.addressToContractMap.set(element, new this.web3.eth.Contract(erc20Abi as any, element));
-                }
-            }
-        });
-        tokenAddresses.forEach(element => {
-            if(!tokenAddressToSymbolDecimals.hasTokenAddress(element)){
-                if(!this.addressToContractMap.has(element)){
-                    this.addressToContractMap.set(element, new this.web3.eth.Contract(erc20Abi as any, element));
-                }
-            }
-        });
-        const promst: Promise<[string, number, string, string]>[] = [];
-        // const promises: Promise<{symbol:string, decimals:number, name:string, address:string}>[] = [];
-        // const tokenSymbolPromises: Promise<{symbol:string|number, backup:string|number}>[] = [];
-        // const tokenDecimalsPromises: Promise<{decimals:string|number, backup:string|number}>[] = [];
-        // const contractPromises: Promise<{contractName: string|number, backup:string|number}>[] = [];
-        
-        this.addressToContractMap.forEach((contract, address) => {
-            const proms = Promise.all([
-                new Promise<string>((res, rej) => {
-                    
-                    const req = contract.methods.symbol().call.request({},'latest',
-                    (err: any, data: string) => {
-                        if (err) {
-                            rej({err, address});
-                        } else {
-                            res(data);
-                        }
-                    });
-                    this.batch.add(req);
-                }).catch(() => {
-                    console.log("symbol fail " + address);
-                    return address;
-                }),
+            address: string;
+            symbolDecimal: SymbolDecimal;
+        }[];
+    }> {
+        const contractNamePromises =
+            this.handleContractNameCalls(contractAddresses);
+        const tokenSymbolsAndDecimalPromises =
+            this.handleTokenAddressSymbolsAndDecimals(tokenAddresses);
+        const result = await Promise.all([
+            Promise.all(contractNamePromises),
+            Promise.all(tokenSymbolsAndDecimalPromises),
+        ]);
 
-                new Promise<number>((res, rej) => {
-                    
-                    const req = contract.methods.decimals().call.request({},'latest',
-                    (err: any, data: number) => {
-                        if (err) {
-                            rej({err:err, val:18});
-                        } else {
-                            res(data);
-                        }
-                    });
-                    this.batch.add(req);
-                }).catch(() => {
-                    console.log("decimals fail " + address);
-                    return 18;
-                }),
-                new Promise<string>((res, rej) => {
-                    
-                    const req = contract.methods.name().call.request({},'latest',
-                    (err: any, data: string) => {
-                        if (err) {
-                            rej({err, address});
-                        } else {
-                            res(data);
-                        }
-                    });
-                    this.batch.add(req);
-                }).catch(() => {
-                    console.log("symbol fail " + address);
-                    return address;
-                }),
-                new Promise<string>(() => {
-                    return address;
-                })
-            ]);
-            promst.push(proms);
+        const resolvedContractNames: {address: string; name: string}[] = [];
+        const resolvedTokenSymbolsAndDecimals: {
+            address: string;
+            symbolDecimal: SymbolDecimal;
+        }[] = [];
+
+        result[0].forEach((addressNameResult) => {
+            resolvedContractNames.push({
+                address: addressNameResult.address,
+                name: addressNameResult.name,
+            });
         });
-        try{
-            console.log("PRMOSES");
-            this.batch.execute();
-            const promiseInformation = await Promise.all(promst);
-            console.log("PROM END " + promiseInformation);
-            // promiseInformation.forEach(result => {
-            //     resolvedContractNames.push({address:result.address, name:result.name});
-            //     resolvedTokenSymbolsAndDecimals.push({address:result.address, symbolDecimal:new SymbolDecimal(result.symbol, result.decimals)});
-            // })
-            return {contractNames: resolvedContractNames, tokenSymbolsAndDecimals:resolvedTokenSymbolsAndDecimals}
-        }catch(e){
-            console.log(e);
-            throw e;
+        result[1].forEach((tokenSymbolDecimalsResult) => {
+            const tokenAddress = tokenSymbolDecimalsResult[0];
+            const tokenSymbol = tokenSymbolDecimalsResult[1];
+            const tokenDecimals = tokenSymbolDecimalsResult[2];
+            resolvedTokenSymbolsAndDecimals.push({
+                address: tokenAddress,
+                symbolDecimal: new SymbolDecimal(tokenSymbol, tokenDecimals),
+            });
+        });
+        return {
+            contractNames: resolvedContractNames,
+            tokenSymbolsAndDecimals: resolvedTokenSymbolsAndDecimals,
+        };
+    }
+    /* eslint-enable max-lines-per-function*/
+
+    private handleContractNameCalls(
+        contractAddresses: string[]
+    ): Promise<{address: string; name: string}>[] {
+        const promises: Promise<{address: string; name: string}>[] = [];
+        contractAddresses.forEach((element) => {
+            this.addContractIfNotPresent(element);
+            const contract = this.addressToContractMap.get(element);
+            if (contract !== undefined) {
+                const promise = contract.methods
+                    .name()
+                    .call()
+                    .then((res: string) => {
+                        return {address: element, name: res};
+                    })
+                    .catch(() => {
+                        return {address: element, name: element};
+                    });
+                promises.push(promise);
+            }
+        });
+        return promises;
+    }
+
+    private handleTokenAddressSymbolsAndDecimals(
+        tokenAddresses: string[]
+    ): Promise<[string, string, number]>[] {
+        const promises: Promise<[string, string, number]>[] = [];
+        tokenAddresses.forEach((element) => {
+            this.addContractIfNotPresent(element);
+            const contract = this.addressToContractMap.get(element);
+            if (contract !== undefined) {
+                promises.push(
+                    this.createTokenSymbolDecimalsPromise(element, contract)
+                );
+            }
+        });
+        return promises;
+    }
+
+    /* eslint-disable max-lines-per-function*/
+    private createTokenSymbolDecimalsPromise(
+        address: string,
+        contract: Contract
+    ): Promise<[string, string, number]> {
+        const promise = Promise.all([
+            address,
+            contract.methods
+                .symbol()
+                .call()
+                .then((res: string) => {
+                    return res;
+                })
+                .catch(() => {
+                    return address;
+                }) as string,
+            contract.methods
+                .decimals()
+                .call()
+                .then((res: number) => {
+                    return res;
+                })
+                .catch(() => {
+                    return 18;
+                }) as number,
+        ])
+            .then((result: [string, string, number]) => {
+                return result;
+            })
+            .catch(() => {
+                const errResult: [string, string, number] = [
+                    address,
+                    address,
+                    18,
+                ];
+                return errResult;
+            });
+        return promise;
+    }
+    /* eslint-enable max-lines-per-function*/
+
+    private addContractIfNotPresent(address: string) {
+        if (!this.addressToContractMap.has(address)) {
+            this.addressToContractMap.set(
+                address,
+                /* eslint-disable max-len*/
+                /* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any*/
+                //@ts-ignore
+                new this.web3.eth.Contract(erc20Abi as any, address)
+                /* eslint-enable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any*/
+                /* eslint-enable max-len*/
+            );
         }
     }
+
     private extendWeb3(_web3Instance: Web3): Web3 {
         _web3Instance.extend({
             property: 'debug',

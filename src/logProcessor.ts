@@ -8,11 +8,12 @@ const transfer = Methods.Transfer;
 const deposit = Methods.Deposit;
 const withdraw = Methods.Withdraw;
 const logWithdraw = Methods.LogWithdraw;
-const processedLogs: ProcessedLog[] = [];
+let processedLogs: ProcessedLog[] = [];
 let logIndex: number;
 
 /* eslint-disable max-lines-per-function */
 export function processLogs(logs: (DecodedLog | null)[]): ProcessedLog[] {
+    processedLogs = [];
     for (let i = 0; i < logs.length; i++) {
         logIndex = i;
         const log = logs[i];

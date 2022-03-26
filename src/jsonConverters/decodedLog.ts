@@ -1,3 +1,4 @@
+//GENERATED VIA https://quicktype.io/
 // To parse this data:
 //
 //   import { Convert } from "./file";

@@ -1,12 +1,13 @@
-import {getValue} from './utility';
+import BigNumber from 'bignumber.js';
 import {
     contractAddressToNames,
     tokenAddressToSymbolDecimals,
     SymbolDecimal,
 } from './knownAddresses';
 import {Transfer, TransfersNodes, AddressNameObject} from './model';
-import { ProviderConnector } from './connector/provider.connector';
+import {ProviderConnector} from './connector/provider.connector';
 
+/* eslint-disable max-lines-per-function */
 export async function translateCallsAndLogs(
     combinedLogsAndTxs: Transfer[],
     providerConnector: ProviderConnector,
@@ -14,14 +15,19 @@ export async function translateCallsAndLogs(
 ): Promise<TransfersNodes> {
     const tokenAddressesAndNodes =
         getNodesAndTokenAddresses(combinedLogsAndTxs);
-        if(providerConnector.resolveContractNamesAndTokenSymbolDecimals()){
-            try {
-                await mapAddressesToNames(tokenAddressesAndNodes, providerConnector);
-            } catch (e) {
-                console.log('Error encountered when mapping adresses to names ' + e);
-                throw e;
-            }
+    if (providerConnector.resolveContractNamesAndTokenSymbolDecimals()) {
+        try {
+            await mapAddressesToNames(
+                tokenAddressesAndNodes,
+                providerConnector
+            );
+        } catch (e) {
+            console.log(
+                'Error encountered when mapping adresses to names ' + e
+            );
+            throw e;
         }
+    }
     const mappedNodes = createMappedNodes(
         tokenAddressesAndNodes.nodes,
         senderAddress
@@ -32,6 +38,7 @@ export async function translateCallsAndLogs(
         nodes: mappedNodes,
     };
 }
+/* eslint-enable max-lines-per-function */
 
 function getNodesAndTokenAddresses(combinedLogsAndTxs: Transfer[]): {
     nodes: string[];
@@ -54,42 +61,61 @@ function getNodesAndTokenAddresses(combinedLogsAndTxs: Transfer[]): {
     return {nodes: nodes, tokenAddresses: tokenAddresses};
 }
 
+/* eslint-disable max-lines-per-function */
 async function mapAddressesToNames(
     tokenAddressesAndNodes: {tokenAddresses: string[]; nodes: string[]},
     providerConnector: ProviderConnector
 ): Promise<void> {
-    
-    if(providerConnector.resolveContractNamesSymbolsAndDecimals === undefined){
-        throw new Error("Method not implemented.");
+    if (
+        providerConnector.resolveContractNamesSymbolsAndDecimals === undefined
+    ) {
+        throw new Error('Method not implemented.');
     }
-    const unknownContractAddresses: string[] = [];
-    const unknownTokenAddresses: string[] = [];
-    for (const contractAddress of tokenAddressesAndNodes.tokenAddresses) {
-        if (!contractAddressToNames.hasContractAddress(contractAddress)) {
-            unknownContractAddresses.push(contractAddress);
-        }
-    }
-    for (const tokenAddress of tokenAddressesAndNodes.nodes) {
-        if (!tokenAddressToSymbolDecimals.hasTokenAddress(tokenAddress)) {
-            unknownTokenAddresses.push(tokenAddress);
-        }
-    }
+    const unknownContractAddresses = getUnknownTokenAndContractAddresses(
+        tokenAddressesAndNodes.nodes
+    );
+    const unknownTokenAddresses = getUnknownTokenAndContractAddresses(
+        tokenAddressesAndNodes.tokenAddresses
+    );
 
-    if (unknownTokenAddresses.length == 0 && unknownContractAddresses.length == 0) {
+    if (
+        unknownTokenAddresses.length == 0 &&
+        unknownContractAddresses.length == 0
+    ) {
         return;
     }
 
-    const contractNamesAndTokenSymbolDecimals = await providerConnector.resolveContractNamesSymbolsAndDecimals(
-        unknownContractAddresses,
-        unknownTokenAddresses
-    )
+    const contractNamesAndTokenSymbolDecimals =
+        await providerConnector.resolveContractNamesSymbolsAndDecimals(
+            unknownContractAddresses,
+            unknownTokenAddresses
+        );
 
-    addTokenAddressSymbolDecimals(contractNamesAndTokenSymbolDecimals.tokenSymbolsAndDecimals);
-    addContractAddressToNames(contractNamesAndTokenSymbolDecimals.contractNames);
+    addTokenAddressSymbolDecimals(
+        contractNamesAndTokenSymbolDecimals.tokenSymbolsAndDecimals
+    );
+    addContractAddressToNames(
+        contractNamesAndTokenSymbolDecimals.contractNames
+    );
     return;
 }
+/* eslint-enable max-lines-per-function */
 
-function addTokenAddressSymbolDecimals(tokenInformation: {address:string, symbolDecimal:SymbolDecimal}[]) {
+function getUnknownTokenAndContractAddresses(
+    addressesToCheck: string[]
+): string[] {
+    const unknownAddresses: string[] = [];
+    for (const contractAddress of addressesToCheck) {
+        if (!contractAddressToNames.hasContractAddress(contractAddress)) {
+            unknownAddresses.push(contractAddress);
+        }
+    }
+    return unknownAddresses;
+}
+
+function addTokenAddressSymbolDecimals(
+    tokenInformation: {address: string; symbolDecimal: SymbolDecimal}[]
+) {
     for (let i = 0; i < tokenInformation.length; i++) {
         const tokenInfo = tokenInformation[i];
         tokenAddressToSymbolDecimals.addTokenAddressSymbolDecimal(
@@ -99,7 +125,9 @@ function addTokenAddressSymbolDecimals(tokenInformation: {address:string, symbol
     }
 }
 
-function addContractAddressToNames(contractInformation: {address:string, name:string}[]) {
+function addContractAddressToNames(
+    contractInformation: {address: string; name: string}[]
+) {
     for (let i = 0; i < contractInformation.length; i++) {
         contractAddressToNames.addContractAddressToNamesMap(
             contractInformation[i].address,
@@ -145,4 +173,21 @@ function setTokenNameAndValues(combinedLogsAndTxs: Transfer[]) {
             true
         );
     });
+}
+
+function getValue(
+    value: BigNumber.Value,
+    decimals: number,
+    cutOff = false
+): number {
+    if (!decimals) {
+        return new BigNumber(value).toNumber();
+    }
+    const s = '1e' + decimals;
+    const x = new BigNumber(value);
+    let temp = new BigNumber(x.div(s));
+    if (cutOff) {
+        temp = new BigNumber(temp.toFixed(3));
+    }
+    return temp.toNumber();
 }

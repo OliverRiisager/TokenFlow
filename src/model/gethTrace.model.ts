@@ -1,4 +1,4 @@
-import { CallObject, Receipt } from ".";
+import {CallObject, Receipt} from '.';
 
 export interface GethTrace {
     receipt: Receipt | null;

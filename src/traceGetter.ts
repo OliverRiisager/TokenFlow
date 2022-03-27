@@ -19,9 +19,7 @@ async function getGethTrace(
             txhash,
             tracer
         );
-        const receipt = await providerConnector.getTransactionReceipt(
-            txhash
-        );
+        const receipt = await providerConnector.getTransactionReceipt(txhash);
         return {callObject: callObject, receipt: receipt};
     } catch (e) {
         const error = 'An error occured when getting Geth Trace ' + e;

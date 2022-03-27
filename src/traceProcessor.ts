@@ -30,18 +30,17 @@ export class TraceProcessor {
     }
 
     getTransfers(txHash: string) {
-        
-        if(txHash === undefined || txHash === null){
+        if (txHash === undefined || txHash === null) {
             throw 'txHash not null or undefined';
         }
-        if(txHash.length != 66){
+        if (txHash.length != 66) {
             throw 'Transaction hash length not of proper lenghth';
         }
         return this.doGetTransfers(txHash);
     }
 
     getDecodeLogs(receipt: Receipt) {
-        if(receipt === null || receipt == undefined){
+        if (receipt === null || receipt == undefined) {
             throw new ReferenceError('receipt was null');
         }
         abiDecoder.keepNonDecodedLogs();

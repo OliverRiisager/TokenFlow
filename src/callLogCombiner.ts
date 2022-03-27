@@ -4,10 +4,10 @@ export function insertLogs(
     processedLogs: ProcessedLog[],
     processedCalls: ProcessedCall[]
 ): Transfer[] {
-    if(processedCalls === undefined || processedCalls == null){
+    if (processedCalls === undefined || processedCalls == null) {
         throw 'processedcalls null or undefined';
     }
-    if(processedLogs === undefined || processedLogs == null){
+    if (processedLogs === undefined || processedLogs == null) {
         throw 'processedLogs null or undefined';
     }
     const combinedTxsAndLogs: Transfer[] = [];

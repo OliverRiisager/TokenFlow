@@ -3,9 +3,7 @@ dist
 coverage
 jest.config.ts
 .eslintrc.js
-test
 jsonConverters
 public
 gethCustomTracer.ts
 services
-server.ts

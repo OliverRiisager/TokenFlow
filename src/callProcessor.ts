@@ -30,7 +30,7 @@ let decodedInput: any = undefined;
 /* eslint-enable @typescript-eslint/no-explicit-any*/
 
 export function processCalls(callObject: CallObject): ProcessedCall[] {
-    if(callObject === null || callObject === undefined){
+    if (callObject === null || callObject === undefined) {
         throw 'callobject null or undefined';
     }
     processedCallsArray = [];

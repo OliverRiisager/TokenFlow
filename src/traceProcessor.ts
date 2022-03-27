@@ -35,7 +35,7 @@ export class TraceProcessor {
             throw 'txHash not null or undefined';
         }
         if(txHash.length != 66){
-            throw 'Transaction hash length not matching';
+            throw 'Transaction hash length not of proper lenghth';
         }
         return this.doGetTransfers(txHash);
     }

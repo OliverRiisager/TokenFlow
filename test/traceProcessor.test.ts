@@ -1,16 +1,19 @@
 
-import Web3 from 'web3';
-import { httpGethProvider } from '../config';
-import { TraceProcessor, Web3Provider } from '../src'
+import { TraceProcessor } from '../src'
 import {rawTransferData, transfersNodesNoExternalTranslation, receiptResult, expectedDecodedLogsResult} from './testdata'
+import {TestProvider} from './test.provider';
 
+import abiDecoder from 'abi-decoder';
+import erc20Abi from '../public/abis/erc20.json';
+import wethAbi from '../public/abis/wrappedEther.json';
 describe(' TraceProcessor - processing known transaction ', () => {
 
     let traceProcessor: TraceProcessor;
     beforeEach(() => {
-        const web3 = new Web3(new Web3.providers.HttpProvider(httpGethProvider));
-        const web3Provider = new Web3Provider(web3);
-        traceProcessor = new TraceProcessor(web3Provider);
+        abiDecoder.addABI(erc20Abi);
+        abiDecoder.addABI(wethAbi);
+        const testProvider = new TestProvider();
+        traceProcessor = new TraceProcessor(testProvider);
     });
     
     describe('Normal trace ', () => {
@@ -41,7 +44,7 @@ describe(' TraceProcessor - processing known transaction ', () => {
         it('throws error on txHash length not 66', () => {
             expect(() => {
                 expect(traceProcessor.getTransfers("123123"))
-            }).toThrow('Transaction hash length not matching');
+            }).toThrow('Transaction hash length not of proper lenghth');
         });
         it('throws error on txHash not defined', () => {
             expect(() => {

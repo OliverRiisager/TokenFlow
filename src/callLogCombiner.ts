@@ -4,6 +4,12 @@ export function insertLogs(
     processedLogs: ProcessedLog[],
     processedCalls: ProcessedCall[]
 ): Transfer[] {
+    if(processedCalls === undefined || processedCalls == null){
+        throw 'processedcalls null or undefined';
+    }
+    if(processedLogs === undefined || processedLogs == null){
+        throw 'processedLogs null or undefined';
+    }
     const combinedTxsAndLogs: Transfer[] = [];
     const noMatchLogs = findLogsWithNoMatch(processedLogs, processedCalls);
     for (let index = 0; index < processedCalls.length; index++) {

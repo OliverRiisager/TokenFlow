@@ -1,4 +1,4 @@
-export * from './nodesAndTxs.testdata';
+export * from './transfersNodes.testdata';
 export * from './callObjectTestData';
 export * from './decodedLogsTestData';
 export * from './raw.testdata';

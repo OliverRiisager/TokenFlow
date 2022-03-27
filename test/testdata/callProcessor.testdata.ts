@@ -1,6 +1,6 @@
 import { CallObject, ProcessedCall } from "../../src";
 
-export const processedCallsInput: CallObject = {
+export const callProcessorCallObjectInput: CallObject = {
     type: "CALL",
     from: "0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f",
     to: "0x111111125434b319222cdbf8c261674adb56f3ae",

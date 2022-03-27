@@ -30,10 +30,20 @@ export class TraceProcessor {
     }
 
     getTransfers(txHash: string) {
+        
+        if(txHash === undefined || txHash === null){
+            throw 'txHash not null or undefined';
+        }
+        if(txHash.length != 66){
+            throw 'Transaction hash length not matching';
+        }
         return this.doGetTransfers(txHash);
     }
 
     getDecodeLogs(receipt: Receipt) {
+        if(receipt === null || receipt == undefined){
+            throw new ReferenceError('receipt was null');
+        }
         abiDecoder.keepNonDecodedLogs();
         const decodedLogJsonString = JSON.stringify(
             abiDecoder.decodeLogs(receipt.logs)
@@ -48,8 +58,7 @@ export class TraceProcessor {
 
     async getDecodedTrace(rawTransferData: GethTrace): Promise<TransfersNodes> {
         if (rawTransferData.error !== undefined) {
-            console.log('hehehe');
-            throw new Error(rawTransferData.error);
+            throw rawTransferData.error;
         }
         const processedCalls = this.getProcessedCalls(rawTransferData);
         const receipt = this.getReceipt(rawTransferData);
@@ -83,15 +92,16 @@ export class TraceProcessor {
 
     private getProcessedCalls(rawTransferData: GethTrace): ProcessedCall[] {
         const callObject: CallObject | null = rawTransferData.callObject;
-        if (callObject === null) {
+        if (callObject === null || callObject === undefined) {
             throw 'Callobject is null - please double check your providerconnector';
         }
-        return processCalls(callObject);
+        const result = processCalls(callObject);
+        return result;
     }
 
     private getReceipt(rawTransferData: GethTrace) {
         const receipt = rawTransferData.receipt;
-        if (receipt === null) {
+        if (receipt === null || receipt === undefined) {
             throw 'Receipt is null - please double check your providerconnector';
         }
         return receipt;

@@ -1,4 +1,4 @@
-import { GethTrace } from "../src";
+import { GethTrace } from "../../src";
 
 export const rawTransferData : GethTrace = {
     callObject: {

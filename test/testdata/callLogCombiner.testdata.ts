@@ -1,7 +1,7 @@
 
 import * as Src from '../../src';
 
-export const senderAddress : string = '0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f';
+export const senderAddress = '0xaf0bbec3ef0aee655ef0b7ee62124ca02e866b5f';
 
 export const combinedLogsAndTxs : Src.Transfer[] = [
   {

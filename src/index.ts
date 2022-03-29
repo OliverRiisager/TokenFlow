@@ -1,5 +1,4 @@
 export * from './model';
-
 export * from './callLogCombiner';
 export * from './callLogTranslator';
 export * from './callProcessor';

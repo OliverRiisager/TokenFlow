@@ -2,11 +2,20 @@ http://tokenflow.xyz
 
 # Example Usage setup:
 
-var traceprocessor = require('tokenflow-geth/tools/traceProcessor');
+To use this tool you have to create an instance of TraceProcessor.
+The TraceProcessor takes an instance of a providerConnector.
 
-let traceprocessorInstance = new traceprocessor({YOU PROVIDERCONNECTOR INSTANCE});
+let traceProcessorInstance = new TraceProcessor({YOUR PROVIDERCONNECTOR INSTANCE})
 
-traceProcessorInstance.getTransfers("(SOME TRANSACTION HASH)");
+You can either implement your own providerConnector or use the supplied Web3 provider.
+
+The ProviderConnector allows you to specify wether or not it should translate contract names, token symbols and decimals.
+To enable translation you need to implement both resolveContractNamesAndTokenSymbolDecimals and resolveContractNamesSymbolsAndDecimals.
+Where resolveContractNamesAndTokenSymbolDecimals returns a boolean - true if you want to have it translate and false if you dont.
+resolveContractNamesSymbolsAndDecimals is the where you should then implement the translation of these values.
+
+To then get the transaction trace, you simply call getTransfers on your traceProcessor instance. Where you just pass in the txhash for the wanted transaction.
+The getTransfers call returns a Promise containing TransfersNodes.
 
 # Test transactions:
 

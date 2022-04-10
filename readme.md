@@ -17,6 +17,8 @@ resolveContractNamesSymbolsAndDecimals is the where you should then implement th
 To then get the transaction trace, you simply call getTransfers on your traceProcessor instance. Where you just pass in the txhash for the wanted transaction.
 The getTransfers call returns a Promise containing TransfersNodes.
 
+
+Check out the getTransaction.example.ts
 # Test transactions:
 
 _Swap Eth to ERC20 (WBTC)._
